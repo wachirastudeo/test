@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สินค้า TikTok Showcase</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      color: #111;
+    }
+
+    #tab-root {
+      padding: 16px;
+    }
+
+    .section {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .section__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .section__body {
+      padding: 16px;
+    }
+
+    .button {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .button--ghost {
+      background: transparent;
+    }
+
+    .button--primary {
+      background: #1a73e8;
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .icon-button {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .product-toolbar {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+    }
+
+    .product-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid #ececec;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .product-card--selected {
+      border-color: #1a73e8;
+      box-shadow: 0 5px 14px rgba(26, 115, 232, 0.16);
+    }
+
+    .product-card__image {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 14px;
+    }
+
+    .product-card__content {
+      flex: 1;
+    }
+
+    .product-card__name {
+      margin: 0 0 8px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .product-card__meta {
+      margin: 0;
+      font-size: 13px;
+      color: #4b5563;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+    }
+
+    .meta-badge--commission {
+      background: #e9f7ef;
+      color: #047857;
+    }
+
+    .meta-badge--danger {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .batch-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pagination-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .pagination-button {
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .pagination-button--active {
+      background: #1a73e8;
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .pagination-ellipsis {
+      padding: 8px 10px;
+      color: #6b7280;
+    }
+
+    .empty-state {
+      padding: 30px 14px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    .status-bar {
+      margin: 16px 0 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    .status-bar--success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-bar--error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-bar--info {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="tab-root">
+    <section class="section">
+      <div class="section__header">
+        <h2>สินค้า TikTok Showcase</h2>
+        <button id="connect-tiktok" class="button button--ghost" type="button">เชื่อมต่อ</button>
+      </div>
+      <div class="section__body">
+        <div class="product-toolbar">
+          <input id="product-search" class="input" type="search" placeholder="ค้นหาสินค้า">
+          <select id="product-sort" class="select" aria-label="เรียงสินค้า">
+            <option value="newest" selected>ล่าสุด (ค่าเริ่มต้น)</option>
+            <option value="name">ชื่อ</option>
+            <option value="commission">ค่าคอมฯ</option>
+            <option value="price">ราคา</option>
+            <option value="stock">สต็อก</option>
+          </select>
+          <button id="refresh-products" class="icon-button" type="button" title="Refresh"
+            aria-label="Refresh">↻</button>
+        </div>
+
+        <div class="batch-actions">
+          <label class="checkbox-row">
+            <input id="select-all-products" type="checkbox"> เลือกทั้งหมด
+          </label>
+          <button id="create-batch-videos" class="button button--primary" type="button" disabled>สร้างวิดีโอ
+            (0)</button>
+        </div>
+        <div id="product-list" class="product-list"></div>
+        <div id="pagination-controls" class="pagination-container"></div>
+        <button id="load-more-products" class="button button--ghost button--full" type="button" hidden>โหลดข้อมูลจาก
+          TikTok เพิ่ม (ชุดถัดไป)</button>
+      </div>
+    </section>
+    <div id="status" class="status-bar status-bar--info">รอใช้งาน</div>
+  </div>
+  <script type="module" src="tab-products.js"></script>
+</body>
+
+</html>

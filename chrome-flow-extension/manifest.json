@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Flow Product Creator",
+  "description": "Scrape product info and send prompts to Flow for image/video creation.",
+  "version": "0.1.0",
+  "icons": {
+    "16": "assets/logo.svg",
+    "48": "assets/logo.svg",
+    "128": "assets/logo.svg"
+  },
+  "permissions": ["activeTab", "scripting", "storage", "tabs", "clipboardWrite"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Flow Product Creator"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

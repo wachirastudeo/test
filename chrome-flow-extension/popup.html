@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flow Product Creator</title>
+    <link rel="stylesheet" href="styles/main.css" />
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="brand">
+            <img src="assets/logo.svg" alt="Flow" width="20" height="20" />
+        </div>
+        <div class="header-text">
+            <h1>Flow Product Creator</h1>
+            <p>สร้างวิดีโอ + ดึงสินค้า TikTok</p>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button id="videoTabBtn" class="tab-button tab-button--active" type="button">
+            <img class="icon" src="assets/icon-flow.svg" alt="Flow" />
+            สร้างวิดีโอ
+        </button>
+        <button id="tiktokTabBtn" class="tab-button" type="button">
+            <img class="icon" src="assets/icon-tiktok.svg" alt="TikTok" />
+            สินค้า TikTok
+        </button>
+    </div>
+
+    <!-- Video Tab -->
+    <div id="videoTab" class="panel panel--active">
+        <section class="section">
+            <div class="section__content">
+                <div class="section-header">
+                    <div>
+                        <h2>Video workflow</h2>
+                        <p class="section-note">สกัดข้อมูลสินค้าแล้วสร้าง prompt ให้ Flow สร้างภาพหรือวิดีโอได้โดยตรง
+                        </p>
+                    </div>
+                </div>
+
+                <div class="field video-actions">
+                    <button id="scrape" type="button">
+                        <img class="button__icon" src="assets/icon-scrape.svg" alt="Scrape" />
+                        Scrape product
+                    </button>
+                    <button id="openFlow" type="button">
+                        <img class="button__icon" src="assets/icon-flow.svg" alt="Open Flow" />
+                        Open Flow
+                    </button>
+                    <button id="openPanel" type="button">
+                        <img class="button__icon" src="assets/icon-flow.svg" alt="Panel" />
+                        Open sidebar
+                    </button>
+                    <button id="injectFlow" type="button">
+                        <img class="button__icon" src="assets/icon-flow.svg" alt="New project" />
+                        New project
+                    </button>
+                    <button id="copyPrompt" class="button--primary" type="button">
+                        <img class="button__icon" src="assets/icon-copy.svg" alt="Copy" />
+                        Copy Flow prompt
+                    </button>
+                </div>
+
+                <div class="field">
+                    <span class="field-label">Product data</span>
+                    <pre id="productData">No data yet</pre>
+                </div>
+                <div class="field">
+                    <span class="field-label">Flow prompt</span>
+                    <pre id="promptText">Press Scrape product first</pre>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- TikTok Tab -->
+    <div id="tiktokTab" class="panel">
+        <section class="section">
+            <div class="section__content">
+                <div class="section-header">
+                    <div>
+                        <h2>สินค้า TikTok Showcase</h2>
+                        <p class="section-note">เลือกสินค้า TikTok แล้วส่งไปยังหน้าสร้างวิดีโอได้ทันที</p>
+                    </div>
+                    <button id="connect-tiktok" class="button button--ghost" type="button">เชื่อมต่อ</button>
+                </div>
+
+                <div class="product-toolbar">
+                    <input id="product-search" class="input" type="search" placeholder="🔍  ค้นหาสินค้า" />
+                    <select id="product-sort" class="select" aria-label="เรียงสินค้า">
+                        <option value="newest" selected>ล่าสุด</option>
+                        <option value="name">ชื่อ</option>
+                        <option value="commission">ค่าคอมฯ</option>
+                        <option value="price">ราคา</option>
+                        <option value="stock">สต็อก</option>
+                    </select>
+                    <button id="refresh-products" class="button" type="button">↻ Refresh</button>
+                </div>
+
+                <div class="field-inline">
+                    <label>
+                        <input id="select-all-products" type="checkbox" />
+                        เลือกทั้งหมด
+                    </label>
+                    <button id="create-batch-videos" class="button button--primary" type="button" disabled>
+                        สร้างวิดีโอ (0)
+                    </button>
+                </div>
+
+                <div id="product-list" class="product-list"></div>
+                <div id="pagination-controls" class="pagination-container"></div>
+
+                <button id="load-more-products" class="button" type="button" hidden>
+                    โหลดข้อมูลเพิ่ม (ชุดถัดไป)
+                </button>
+
+                <div id="status" class="status-bar status-bar--info">รอใช้งาน</div>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="popup.js"></script>
+</body>
+
+</html>
