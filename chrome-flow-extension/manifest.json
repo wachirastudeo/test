@@ -8,11 +8,13 @@
     "48": "assets/logo.svg",
     "128": "assets/logo.svg"
   },
-  "permissions": ["activeTab", "scripting", "storage", "tabs", "clipboardWrite"],
+  "permissions": ["activeTab", "scripting", "storage", "tabs", "clipboardWrite", "sidePanel"],
   "host_permissions": ["<all_urls>"],
   "action": {
-    "default_popup": "popup.html",
     "default_title": "Flow Product Creator"
+  },
+  "side_panel": {
+    "default_path": "popup.html"
   },
   "background": {
     "service_worker": "background.js",

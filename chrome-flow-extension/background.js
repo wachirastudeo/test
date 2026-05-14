@@ -1,5 +1,10 @@
 import { fetchShowcaseProducts } from './tiktok-api.js';
 
+// Open side panel when extension icon is clicked
+chrome.sidePanel
+  .setPanelBehavior({ openPanelOnActionClick: true })
+  .catch((error) => console.error(error));
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'openFlow') {
     chrome.tabs.create({ url: 'https://labs.google/fx/tools/flow' });
@@ -8,11 +13,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.action === 'openPanel') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tabId = tabs?.[0]?.id;
-      if (!tabId) return sendResponse({ status: 'no_tab' });
-      chrome.tabs.sendMessage(tabId, { action: 'openPanel' }, (resp) => {
-        sendResponse(resp || { status: 'panel_requested' });
-      });
+      if (tabs[0]?.windowId) {
+        chrome.sidePanel.open({ windowId: tabs[0].windowId })
+          .then(() => sendResponse({ status: 'panel_opened' }))
+          .catch((error) => sendResponse({ status: 'error', error: error.message }));
+      }
     });
     return true;
   }

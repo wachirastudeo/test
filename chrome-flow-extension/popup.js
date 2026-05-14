@@ -73,7 +73,6 @@ function openFlow() {
 
 function openPanel() {
   chrome.runtime.sendMessage({ action: 'openPanel' });
-  window.close();
 }
 
 async function injectFlow() {
