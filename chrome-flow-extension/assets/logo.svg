@@ -1,8 +1,18 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="128" height="128" rx="32" fill="#1D4ED8"/>
-  <path d="M44 44L84 44L84 84L44 84Z" fill="white" opacity="0.16"/>
-  <path d="M46 46H82V82H46V46Z" fill="white"/>
-  <path d="M58 52H70V76H58V52Z" fill="#1D4ED8"/>
-  <path d="M76 52H88V76H76V52Z" fill="#1D4ED8"/>
-  <path d="M56 84H90C92.2091 84 94 82.2091 94 80V64H52V80C52 82.2091 53.7909 84 56 84Z" fill="#2563EB"/>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <rect width="128" height="128" rx="28" fill="url(#bg)" />
+  
+  <path d="M48 40 C48 35.5817 52.8123 32.8166 56.6433 35.0296L92.6433 55.8142C96.4447 58.0097 96.4447 63.486 92.6433 65.6816L56.6433 86.4661C52.8123 88.6791 48 85.914 48 81.4958V40Z" fill="white" filter="url(#glow)" />
+  
+  <!-- Overlay magical sparkle -->
+  <path d="M84 32 L86 40 L94 42 L86 44 L84 52 L82 44 L74 42 L82 40 Z" fill="white" opacity="0.9" />
 </svg>
