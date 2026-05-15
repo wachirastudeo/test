@@ -38,42 +38,73 @@
             <div class="section__content">
                 <div class="section-header">
                     <div>
-                        <h2>Video workflow</h2>
-                        <p class="section-note">สกัดข้อมูลสินค้าแล้วสร้าง prompt ให้ Flow สร้างภาพหรือวิดีโอได้โดยตรง
-                        </p>
+                        <h2>ตั้งค่าวิดีโอ</h2>
+                        <p class="section-note">สร้างวิดีโอและภาพสินค้าด้วย Google Flow</p>
                     </div>
                 </div>
 
-                <div class="field video-actions">
-                    <button id="scrape" type="button">
-                        <img class="button__icon" src="assets/icon-scrape.svg" alt="Scrape" />
-                        Scrape product
-                    </button>
-                    <button id="openFlow" type="button">
-                        <img class="button__icon" src="assets/icon-flow.svg" alt="Open Flow" />
-                        Open Flow
-                    </button>
-                    <button id="openPanel" type="button">
-                        <img class="button__icon" src="assets/icon-flow.svg" alt="Panel" />
-                        Open sidebar
-                    </button>
-                    <button id="injectFlow" type="button">
-                        <img class="button__icon" src="assets/icon-flow.svg" alt="New project" />
-                        New project
-                    </button>
-                    <button id="copyPrompt" class="button--primary" type="button">
-                        <img class="button__icon" src="assets/icon-copy.svg" alt="Copy" />
-                        Copy Flow prompt
+                <!-- Selected Product Fields -->
+                <div class="field" style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px;">
+                    <img id="product-image-preview" src="assets/icon-128.png" style="width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2);" alt="Preview">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                        <div>
+                            <label class="field-label" for="product-name-input" style="margin-bottom: 4px;">ชื่อสินค้า</label>
+                            <input type="text" id="product-name-input" class="input" placeholder="สามารถแก้ไขชื่อสินค้าได้ที่นี่">
+                        </div>
+                        <div>
+                            <label class="field-label" for="product-image-input" style="margin-bottom: 4px;">ลิงก์รูปภาพ</label>
+                            <input type="text" id="product-image-input" class="input" placeholder="วาง URL ของรูปภาพ">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Generation Settings -->
+                <h3 style="margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: var(--primary); font-weight: 600;">1. ตั้งค่าสร้างภาพใหม่ (Image Settings)</h3>
+                <div class="field">
+                    <label class="field-label" for="image-style">สไตล์ภาพ (Image Style)</label>
+                    <select id="image-style" class="select">
+                        <option value="cinematic">Cinematic (สมจริง)</option>
+                        <option value="studio">Studio Lighting (จัดแสงสตูดิโอ)</option>
+                        <option value="anime">Anime (การ์ตูน)</option>
+                        <option value="3d">3D Render (ภาพสามมิติ)</option>
+                        <option value="popart">Pop Art (สีสันสดใส)</option>
+                    </select>
+                </div>
+                
+                <div class="field">
+                    <label class="field-label" for="image-prompt-extra">รายละเอียดภาพ (Image Prompt)</label>
+                    <textarea id="image-prompt-extra" class="input" rows="2" placeholder="เช่น: สินค้าวางบนโขดหิน, ฉากหลังป่าไม้ชุ่มชื้น..." style="resize: vertical;"></textarea>
+                </div>
+
+                <!-- Video Generation Settings -->
+                <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 13px; color: var(--accent); font-weight: 600;">2. ตั้งค่านำภาพไปทำวิดีโอ (Video Settings)</h3>
+                <div class="field">
+                    <label class="field-label" for="video-motion">มุมกล้อง (Camera Motion)</label>
+                    <select id="video-motion" class="select">
+                        <option value="auto">Auto (ให้ AI เลือก)</option>
+                        <option value="zoom-in">Zoom In (ซูมเข้า)</option>
+                        <option value="zoom-out">Zoom Out (ซูมออก)</option>
+                        <option value="pan-left">Pan Left (แพนซ้าย)</option>
+                        <option value="pan-right">Pan Right (แพนขวา)</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="video-prompt-extra">รายละเอียดวิดีโอ (Video Prompt)</label>
+                    <textarea id="video-prompt-extra" class="input" rows="2" placeholder="เช่น: น้ำหยดลงพื้น, มีควันจางๆ พัดผ่าน..." style="resize: vertical;"></textarea>
+                </div>
+
+                <div class="field" style="margin-top: 20px;">
+                    <button id="generate-video-btn" class="button button--primary" type="button">
+                        <img class="button__icon" src="assets/icon-flow.svg" alt="Generate" />
+                        เริ่มสร้างภาพและวิดีโอบน Flow
                     </button>
                 </div>
 
                 <div class="field">
-                    <span class="field-label">Product data</span>
-                    <pre id="productData">No data yet</pre>
-                </div>
-                <div class="field">
-                    <span class="field-label">Flow prompt</span>
-                    <pre id="promptText">Press Scrape product first</pre>
+                    <button id="open-flow-btn" class="button button--ghost" type="button">
+                        เปิดหน้า Google Flow
+                    </button>
                 </div>
             </div>
         </section>

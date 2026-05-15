@@ -1,12 +1,9 @@
 import { initProductsTab } from './tab-products.js';
 
-const productDataEl = document.getElementById('productData');
-const promptTextEl = document.getElementById('promptText');
 const videoTabBtn = document.getElementById('videoTabBtn');
 const tiktokTabBtn = document.getElementById('tiktokTabBtn');
 const videoTab = document.getElementById('videoTab');
 const tiktokTab = document.getElementById('tiktokTab');
-let currentProduct = null;
 
 function setActiveTab(tabName) {
   if (tabName === 'video') {
@@ -14,6 +11,7 @@ function setActiveTab(tabName) {
     tiktokTab.classList.remove('panel--active');
     videoTabBtn.classList.add('tab-button--active');
     tiktokTabBtn.classList.remove('tab-button--active');
+    loadSelectedProduct();
   } else {
     videoTab.classList.remove('panel--active');
     tiktokTab.classList.add('panel--active');
@@ -22,75 +20,67 @@ function setActiveTab(tabName) {
   }
 }
 
-function buildPrompt(product) {
-  const lines = [
-    `Create a high-quality image and a short video concept for this product: ${product.title}`,
-    product.description ? `Description: ${product.description}` : '',
-    product.price ? `Price: ${product.price}` : '',
-    `Use the product URL: ${product.url}`,
-    product.image ? `Main image: ${product.image}` : ''
-  ].filter(Boolean);
-  return lines.join('\n');
-}
-
-function updateUI(product) {
-  productDataEl.textContent = JSON.stringify(product, null, 2);
-  const prompt = buildPrompt(product);
-  promptTextEl.textContent = prompt;
-  currentProduct = product;
-}
-
-function sendMessageToActiveTab(message) {
-  return new Promise((resolve) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (!tabs[0]) return resolve(null);
-      chrome.tabs.sendMessage(tabs[0].id, message, (response) => {
-        resolve(response);
-      });
-    });
-  });
-}
-
-async function scrapeProduct() {
-  const response = await sendMessageToActiveTab({ action: 'scrapeProduct' });
-  if (response?.product) {
-    updateUI(response.product);
+async function loadSelectedProduct() {
+  const { selectedProduct } = await chrome.storage.local.get('selectedProduct');
+  const nameInput = document.getElementById('product-name-input');
+  const imageInput = document.getElementById('product-image-input');
+  const previewImg = document.getElementById('product-image-preview');
+  
+  if (selectedProduct) {
+    const imageUrl = selectedProduct.imageUrls?.[0] || "assets/icon-128.png";
+    nameInput.value = selectedProduct.name || '';
+    imageInput.value = imageUrl;
+    previewImg.src = imageUrl;
   } else {
-    productDataEl.textContent = 'No product data found.';
-    promptTextEl.textContent = 'Scrape failed.';
+    nameInput.value = '';
+    imageInput.value = '';
+    previewImg.src = 'assets/icon-128.png';
   }
 }
 
-async function copyPrompt() {
-  if (!currentProduct) return;
-  const prompt = buildPrompt(currentProduct);
-  await navigator.clipboard.writeText(prompt);
-}
+document.getElementById('product-image-input').addEventListener('input', (e) => {
+  const previewImg = document.getElementById('product-image-preview');
+  previewImg.src = e.target.value || 'assets/icon-128.png';
+});
 
 function openFlow() {
   chrome.runtime.sendMessage({ action: 'openFlow' });
 }
 
-function openPanel() {
-  chrome.runtime.sendMessage({ action: 'openPanel' });
-}
-
-async function injectFlow() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id) return;
-  chrome.runtime.sendMessage({ action: 'injectFlowScript' });
+async function generateVideo() {
+  const imageStyle = document.getElementById('image-style').value;
+  const imagePromptExtra = document.getElementById('image-prompt-extra').value;
+  const videoMotion = document.getElementById('video-motion').value;
+  const videoPromptExtra = document.getElementById('video-prompt-extra').value;
+  const productName = document.getElementById('product-name-input').value;
+  const productImage = document.getElementById('product-image-input').value;
+  
+  await chrome.storage.local.set({ 
+    videoSettings: { 
+      imageStyle, imagePromptExtra, 
+      videoMotion, videoPromptExtra, 
+      productName, productImage 
+    } 
+  });
+  
+  chrome.runtime.sendMessage({ action: 'openFlow' }, (response) => {
+    // Inject flow script after opening
+    setTimeout(() => {
+      chrome.runtime.sendMessage({ action: 'injectFlowScript' });
+    }, 1500);
+  });
 }
 
 videoTabBtn.addEventListener('click', () => setActiveTab('video'));
 tiktokTabBtn.addEventListener('click', () => setActiveTab('tiktok'));
 
-document.getElementById('scrape').addEventListener('click', scrapeProduct);
-document.getElementById('openFlow').addEventListener('click', openFlow);
-document.getElementById('openPanel').addEventListener('click', openPanel);
-document.getElementById('injectFlow').addEventListener('click', injectFlow);
-document.getElementById('copyPrompt').addEventListener('click', copyPrompt);
+document.getElementById('open-flow-btn').addEventListener('click', openFlow);
+document.getElementById('generate-video-btn').addEventListener('click', generateVideo);
 
-setActiveTab('video');
+chrome.storage.local.get('activeTab', (data) => {
+  setActiveTab(data.activeTab || 'video');
+  chrome.storage.local.remove('activeTab');
+});
 
 initProductsTab({
   showStatus(message, type = 'info') {
@@ -104,9 +94,7 @@ initProductsTab({
     console.log(`${type}: ${message}`);
   },
   switchTab(tabName) {
-    if (tabName === 'video') {
-      setActiveTab('video');
-    }
+    setActiveTab(tabName);
   }
 }).catch((error) => {
   console.error('initProductsTab error', error);
