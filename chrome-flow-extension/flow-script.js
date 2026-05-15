@@ -52,12 +52,22 @@ async function uploadImageFromUrl(url) {
 async function waitForFlowReady() {
   console.log('⏳ Waiting for Flow UI...');
   const start = Date.now();
-  while (Date.now() - start < 20000) {
+  while (Date.now() - start < 30000) {
     const textbox = document.querySelector('div[role="textbox"]');
-    if (textbox) return true;
+    const newProjectBtn = findButtonByText('New project') || findButtonByText('Create with Flow');
+    
+    if (textbox) {
+      console.log('✅ Workspace ready');
+      return 'workspace';
+    }
+    if (newProjectBtn) {
+      console.log('✅ Dashboard detected, clicking New Project...');
+      newProjectBtn.click();
+      await delay(2000);
+    }
     await delay(1000);
   }
-  return false;
+  return null;
 }
 
 async function setAspectRatio(ratio = '9:16') {
@@ -115,7 +125,7 @@ async function setPromptText(text) {
   return false;
 }
 
-async function waitForMedia(timeout = 15000) {
+async function waitForMedia(timeout = 30000) {
   console.log('🔍 Waiting for media to appear in workspace...');
   const start = Date.now();
   while (Date.now() - start < timeout) {
@@ -131,9 +141,10 @@ async function waitForMedia(timeout = 15000) {
 }
 
 async function automate() {
-  const isReady = await waitForFlowReady();
-  if (!isReady) {
-    console.log('⚠️ Flow UI not fully loaded, proceeding carefully...');
+  const flowState = await waitForFlowReady();
+  if (!flowState) {
+    console.error('❌ Flow UI not ready after 30s');
+    return;
   }
   
   await delay(2000);
@@ -152,15 +163,15 @@ async function automate() {
   await chrome.storage.local.set({ autoGenerateVideo: false });
 
   const { productImage, productName, imagePromptExtra, imageAspectRatio = '9:16' } = videoSettings;
-  console.log('🚀 Starting generation sequence...');
+  console.log('🚀 Starting generation for TikTok product:', productName);
 
   try {
-    // 1. Upload Image
+    // 1. Upload Image (from TikTok product data)
     if (productImage) {
       const success = await uploadImageFromUrl(productImage);
       if (success) {
         // Instead of fixed delay, wait for the media element to appear
-        await waitForMedia(15000);
+        await waitForMedia(30000);
       }
     }
 
