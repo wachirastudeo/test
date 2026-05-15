@@ -11,6 +11,60 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ status: 'opened' });
   }
 
+  if (message.action === 'openFlowAndGenerate') {
+    chrome.tabs.create({ url: 'https://labs.google/fx/tools/flow' }, (tab) => {
+      // Flow is a SPA — wait for it to fully render before injecting
+      const MAX_WAIT = 30000;
+      const CHECK_INTERVAL = 1000;
+      let elapsed = 0;
+      let injected = false;
+      
+      const checkAndInject = setInterval(() => {
+        chrome.tabs.get(tab.id, (tabInfo) => {
+          if (!tabInfo || injected) {
+            clearInterval(checkAndInject);
+            return;
+          }
+          
+          elapsed += CHECK_INTERVAL;
+          
+          if (tabInfo.status === 'complete') {
+            // Check if Flow's buttons are actually rendered
+            chrome.scripting.executeScript(
+              {
+                target: { tabId: tab.id },
+                func: () => document.querySelectorAll('button').length
+              },
+              (results) => {
+                const btnCount = results?.[0]?.result || 0;
+                if (btnCount > 0 && !injected) {
+                  injected = true;
+                  clearInterval(checkAndInject);
+                  console.log(`✅ Flow DOM ready (${btnCount} buttons), injecting...`);
+                  chrome.scripting.executeScript(
+                    { target: { tabId: tab.id }, files: ['flow-script.js'] },
+                    () => console.log('✅ Flow script injected')
+                  );
+                } else if (elapsed >= MAX_WAIT && !injected) {
+                  injected = true;
+                  clearInterval(checkAndInject);
+                  console.log('⚠️ Timeout, injecting anyway...');
+                  chrome.scripting.executeScript(
+                    { target: { tabId: tab.id }, files: ['flow-script.js'] },
+                    () => console.log('✅ Flow script injected (timeout)')
+                  );
+                }
+              }
+            );
+          }
+        });
+      }, CHECK_INTERVAL);
+      
+      sendResponse({ status: 'opened', tabId: tab.id });
+    });
+    return true;
+  }
+
   if (message.action === 'openPanel') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.windowId) {

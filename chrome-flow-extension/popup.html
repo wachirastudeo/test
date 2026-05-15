@@ -45,21 +45,28 @@
 
                 <!-- Selected Product Fields -->
                 <div class="field" style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px;">
-                    <img id="product-image-preview" src="assets/icon-128.png" style="width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2);" alt="Preview">
+                    <img id="product-image-preview" src="assets/icon-128.png"
+                        style="width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2);"
+                        alt="Preview">
                     <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
                         <div>
-                            <label class="field-label" for="product-name-input" style="margin-bottom: 4px;">ชื่อสินค้า</label>
-                            <input type="text" id="product-name-input" class="input" placeholder="สามารถแก้ไขชื่อสินค้าได้ที่นี่">
+                            <label class="field-label" for="product-name-input"
+                                style="margin-bottom: 4px;">ชื่อสินค้า</label>
+                            <input type="text" id="product-name-input" class="input"
+                                placeholder="สามารถแก้ไขชื่อสินค้าได้ที่นี่">
                         </div>
                         <div>
-                            <label class="field-label" for="product-image-input" style="margin-bottom: 4px;">ลิงก์รูปภาพ</label>
+                            <label class="field-label" for="product-image-input"
+                                style="margin-bottom: 4px;">ลิงก์รูปภาพ</label>
                             <input type="text" id="product-image-input" class="input" placeholder="วาง URL ของรูปภาพ">
                         </div>
                     </div>
                 </div>
 
                 <!-- Image Generation Settings -->
-                <h3 style="margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: var(--primary); font-weight: 600;">1. ตั้งค่าสร้างภาพใหม่ (Image Settings)</h3>
+                <h3
+                    style="margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: var(--primary); font-weight: 600;">
+                    1. ตั้งค่าสร้างภาพใหม่ (Image Settings)</h3>
                 <div class="field">
                     <label class="field-label" for="image-style">สไตล์ภาพ (Image Style)</label>
                     <select id="image-style" class="select">
@@ -70,14 +77,28 @@
                         <option value="popart">Pop Art (สีสันสดใส)</option>
                     </select>
                 </div>
-                
+
+                <div class="field">
+                    <label class="field-label" for="image-aspect-ratio">อัตราส่วนภาพ (Aspect Ratio)</label>
+                    <select id="image-aspect-ratio" class="select">
+                        <option value="1:1">1:1 (สี่เหลี่ยมจัตุรัส)</option>
+                        <option value="9:16" selected>9:16 (ยาว)</option>
+                        <option value="16:9">16:9 (ไวด์)</option>
+                        <option value="4:3">4:3 (มาตรฐาน)</option>
+                    </select>
+                </div>
+
                 <div class="field">
                     <label class="field-label" for="image-prompt-extra">รายละเอียดภาพ (Image Prompt)</label>
-                    <textarea id="image-prompt-extra" class="input" rows="2" placeholder="เช่น: สินค้าวางบนโขดหิน, ฉากหลังป่าไม้ชุ่มชื้น..." style="resize: vertical;"></textarea>
+                    <textarea id="image-prompt-extra" class="input" rows="2"
+                        placeholder="เช่น: สินค้าวางบนโขดหิน, ฉากหลังป่าไม้ชุ่มชื้น..."
+                        style="resize: vertical;"></textarea>
                 </div>
 
                 <!-- Video Generation Settings -->
-                <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 13px; color: var(--accent); font-weight: 600;">2. ตั้งค่านำภาพไปทำวิดีโอ (Video Settings)</h3>
+                <h3
+                    style="margin-top: 20px; margin-bottom: 8px; font-size: 13px; color: var(--accent); font-weight: 600;">
+                    2. ตั้งค่านำภาพไปทำวิดีโอ (Video Settings)</h3>
                 <div class="field">
                     <label class="field-label" for="video-motion">มุมกล้อง (Camera Motion)</label>
                     <select id="video-motion" class="select">
@@ -91,7 +112,8 @@
 
                 <div class="field">
                     <label class="field-label" for="video-prompt-extra">รายละเอียดวิดีโอ (Video Prompt)</label>
-                    <textarea id="video-prompt-extra" class="input" rows="2" placeholder="เช่น: น้ำหยดลงพื้น, มีควันจางๆ พัดผ่าน..." style="resize: vertical;"></textarea>
+                    <textarea id="video-prompt-extra" class="input" rows="2"
+                        placeholder="เช่น: น้ำหยดลงพื้น, มีควันจางๆ พัดผ่าน..." style="resize: vertical;"></textarea>
                 </div>
 
                 <div class="field" style="margin-top: 20px;">

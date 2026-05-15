@@ -49,25 +49,26 @@ function openFlow() {
 
 async function generateVideo() {
   const imageStyle = document.getElementById('image-style').value;
+  const imageAspectRatio = document.getElementById('image-aspect-ratio').value;
   const imagePromptExtra = document.getElementById('image-prompt-extra').value;
   const videoMotion = document.getElementById('video-motion').value;
   const videoPromptExtra = document.getElementById('video-prompt-extra').value;
   const productName = document.getElementById('product-name-input').value;
   const productImage = document.getElementById('product-image-input').value;
   
+  console.log('💾 Saving video settings...');
   await chrome.storage.local.set({ 
     videoSettings: { 
-      imageStyle, imagePromptExtra, 
+      imageStyle, imageAspectRatio, imagePromptExtra, 
       videoMotion, videoPromptExtra, 
       productName, productImage 
-    } 
+    },
+    autoGenerateVideo: true  // Flag to auto-generate after opening
   });
   
-  chrome.runtime.sendMessage({ action: 'openFlow' }, (response) => {
-    // Inject flow script after opening
-    setTimeout(() => {
-      chrome.runtime.sendMessage({ action: 'injectFlowScript' });
-    }, 1500);
+  console.log('🌐 Opening Flow...');
+  chrome.runtime.sendMessage({ action: 'openFlowAndGenerate' }, (response) => {
+    console.log('✅ Response:', response);
   });
 }
 
