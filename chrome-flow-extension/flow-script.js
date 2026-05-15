@@ -4,247 +4,193 @@ function findButtonByText(text) {
   const elements = Array.from(document.querySelectorAll('button, [role="button"], a, div, span'));
   return elements.find(el => {
     const content = (el.textContent || el.innerText || '').trim();
+    // Support for both text and Material Icon names
     return content.toLowerCase().includes(text.toLowerCase()) || 
            (el.getAttribute('aria-label') || '').toLowerCase().includes(text.toLowerCase());
   });
 }
 
-function findInputByPlaceholder(text) {
-  return Array.from(document.querySelectorAll('input, textarea')).find(el => {
-    const placeholder = (el.getAttribute('placeholder') || '').toLowerCase();
-    return placeholder.includes(text.toLowerCase());
-  });
-}
+async function uploadImageFromUrl(url) {
+  console.log('🖼️ Fetching image from URL:', url);
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const fileName = url.split('/').pop() || 'product.jpg';
+    const file = new File([blob], fileName, { type: blob.type });
 
-async function waitForButtons(timeout = 20000) {
-  const start = Date.now();
-  while (Date.now() - start < timeout) {
-    const btns = document.querySelectorAll('button');
-    if (btns.length > 0) return btns.length;
-    await delay(500);
+    // Find the hidden file input
+    let fileInput = document.querySelector('input[type="file"]');
+    
+    // If not found, try to trigger the Add Media menu first
+    if (!fileInput) {
+      console.log('🔍 File input not found, clicking Add Media...');
+      const addBtn = findButtonByText('add') || findButtonByText('Add Media');
+      if (addBtn) {
+        addBtn.click();
+        await delay(1000);
+        fileInput = document.querySelector('input[type="file"]');
+      }
+    }
+
+    if (fileInput) {
+      const container = new DataTransfer();
+      container.items.add(file);
+      fileInput.files = container.files;
+      fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+      console.log('✅ Image file assigned to input');
+      return true;
+    } else {
+      console.error('❌ Could not find file input even after clicking Add');
+      return false;
+    }
+  } catch (err) {
+    console.error('❌ Error uploading image:', err);
+    return false;
   }
-  return 0;
 }
 
 async function waitForFlowReady() {
-  console.log('⏳ Waiting for Flow to be ready...');
-  const count = await waitForButtons(20000);
-  if (count > 0) {
-    console.log(`✅ Flow ready! Found ${count} buttons`);
+  console.log('⏳ Waiting for Flow UI...');
+  const start = Date.now();
+  while (Date.now() - start < 20000) {
+    const textbox = document.querySelector('div[role="textbox"]');
+    if (textbox) return true;
+    await delay(1000);
+  }
+  return false;
+}
+
+async function setAspectRatio(ratio = '9:16') {
+  console.log(`📐 Setting aspect ratio to ${ratio}...`);
+  try {
+    // 1. Click the settings/model trigger to open the menu
+    const trigger = document.querySelector('button:has(i[class*="crop_"])') || 
+                    findButtonByText('Nano Banana Pro'); // Fallback to model name
+    
+    if (trigger) {
+      trigger.click();
+      await delay(800);
+
+      // 2. Click the 9:16 (Portrait) button
+      // The selector found was button[id$="-trigger-PORTRAIT"] or role="tab"
+      const portraitBtn = document.querySelector('button[id$="-trigger-PORTRAIT"]') || 
+                          findButtonByText('9:16') ||
+                          Array.from(document.querySelectorAll('button[role="tab"]')).find(b => b.textContent.includes('9:16'));
+      
+      if (portraitBtn) {
+        portraitBtn.click();
+        console.log('✅ Aspect ratio set to 9:16');
+        await delay(500);
+        // Usually clicking the ratio might close the menu, but if not, click trigger again or elsewhere
+      } else {
+        console.error('❌ Could not find 9:16 button in menu');
+      }
+    } else {
+      console.error('❌ Could not find settings trigger');
+    }
+  } catch (err) {
+    console.error('❌ Error setting aspect ratio:', err);
+  }
+}
+
+async function setPromptText(text) {
+  const textbox = document.querySelector('div[role="textbox"]');
+  if (textbox) {
+    console.log('✍️ Filling prompt...');
+    textbox.focus();
+    
+    // Clear existing text
+    textbox.innerText = '';
+    
+    // Use execCommand for better React/State compatibility
+    document.execCommand('insertText', false, text);
+    
+    // Trigger events as backup
+    textbox.dispatchEvent(new Event('input', { bubbles: true }));
+    textbox.dispatchEvent(new Event('change', { bubbles: true }));
+    
+    console.log('✅ Prompt filled using execCommand');
     return true;
   }
-  console.log('⚠️ No buttons found after 20s, proceeding anyway...');
   return false;
 }
 
 async function automate() {
-  // Wait for Flow DOM to be fully rendered first
-  await waitForFlowReady();
-  await delay(1000);
+  const isReady = await waitForFlowReady();
+  if (!isReady) {
+    console.log('⚠️ Flow UI not fully loaded, proceeding carefully...');
+  }
   
-  console.log('🚀 Image Generation Starting...');
-  
+  await delay(2000);
+
   // Get settings from extension storage
   const { videoSettings, autoGenerateVideo } = await new Promise(resolve => {
     chrome.storage.local.get(['videoSettings', 'autoGenerateVideo'], resolve);
   });
 
   if (!videoSettings || !autoGenerateVideo) {
-    console.log('⚠️ No video settings or auto flag found');
+    console.log('ℹ️ No active generation task found');
     return;
   }
 
-  const { 
-    productImage, 
-    productName,
-    imageAspectRatio = '9:16', 
-    imageStyle = 'cinematic', 
-    imagePromptExtra,
-  } = videoSettings;
+  // Clear auto flag so it doesn't run again on reload
+  await chrome.storage.local.set({ autoGenerateVideo: false });
 
-  console.log('📋 Image Generation Settings:', { 
-    productName, 
-    imageAspectRatio, 
-    imageStyle,
-    imagePromptExtra 
-  });
+  const { productImage, productName, imagePromptExtra, imageAspectRatio = '9:16' } = videoSettings;
+  console.log('🚀 Starting generation sequence...');
 
   try {
-    // ===== STAGE 1: IMAGE GENERATION =====
-    console.log('\n╔════════════════════════════════════╗');
-    console.log('║    STAGE 1: IMAGE GENERATION      ║');
-    console.log('╚════════════════════════════════════╝\n');
-
-    // ===== STEP 1: Click "Add Media" or find upload area =====
-    console.log('1️⃣ Looking for upload/add media button...');
-    let addBtn = findButtonByText('Add Media') || 
-                 findButtonByText('Add') ||
-                 findButtonByText('Upload');
-    
-    if (addBtn && !addBtn.disabled) {
-      addBtn.click();
-      console.log('✅ Clicked upload button');
-      await delay(1500);
-    } else {
-      console.log('⚠️ Upload button not found, trying alternative method');
-    }
-
-    // ===== STEP 2: Fill Image URL =====
+    // 1. Upload Image
     if (productImage) {
-      console.log('\n2️⃣ Filling image URL...');
-      const imageInput = Array.from(document.querySelectorAll('input[type="text"], input[type="url"]'))
-        .find(inp => {
-          const placeholder = (inp.getAttribute('placeholder') || '').toLowerCase();
-          const value = inp.value || '';
-          const visible = inp.offsetParent !== null;
-          return visible && (
-            placeholder.includes('image') || 
-            placeholder.includes('url') ||
-            placeholder.includes('upload') ||
-            value === ''
-          );
-        });
-
-      if (imageInput) {
-        console.log('   🔗 Found image input field');
-        imageInput.focus();
-        imageInput.value = productImage;
-        imageInput.dispatchEvent(new Event('input', { bubbles: true }));
-        imageInput.dispatchEvent(new Event('change', { bubbles: true }));
-        imageInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-        console.log(`✅ Image URL filled: ${productImage.substring(0, 50)}...`);
-        await delay(1500);
-      } else {
-        console.log('⚠️ Image input not found');
+      const success = await uploadImageFromUrl(productImage);
+      if (success) {
+        console.log('⏳ Image uploaded, waiting for processing (5s)...');
+        await delay(5000); // Wait longer for image processing
       }
     }
 
-    // ===== STEP 3: Click Next/Continue to settings =====
-    console.log('\n3️⃣ Looking for "Next" or "Continue" button...');
-    let nextBtn = findButtonByText('Next') || 
-                  findButtonByText('Continue') || 
-                  findButtonByText('Confirm') ||
-                  findButtonByText('Next Step');
-    
-    if (nextBtn && !nextBtn.disabled) {
-      nextBtn.click();
-      console.log('✅ Proceeding to settings screen');
-      await delay(2000);
-    } else {
-      console.log('⚠️ Next button not found, may be auto-proceeding');
-      await delay(1500);
+    // 2. Set Aspect Ratio
+    if (imageAspectRatio === '9:16') {
+      await setAspectRatio('9:16');
+      await delay(1000);
     }
 
-    // ===== STEP 4: Set Aspect Ratio 9:16 =====
-    console.log(`\n4️⃣ Setting aspect ratio to ${imageAspectRatio}...`);
-    const aspectBtn = findButtonByText(imageAspectRatio) || 
-                      findButtonByText('9:16') ||
-                      findButtonByText('Portrait');
-    
-    if (aspectBtn && !aspectBtn.disabled) {
-      aspectBtn.click();
-      console.log(`✅ Aspect ratio set to ${imageAspectRatio}`);
-      await delay(800);
-    } else {
-      console.log('⚠️ Aspect ratio button not found');
+    // 3. Fill Prompt
+    const finalPrompt = `${productName}. ${imagePromptExtra || ''}`.trim();
+    const promptSuccess = await setPromptText(finalPrompt);
+    if (!promptSuccess) {
+      console.error('❌ Failed to fill prompt');
     }
+    await delay(1000);
 
-    // ===== STEP 5: Set Image Style =====
-    console.log(`\n5️⃣ Setting image style to "${imageStyle}"...`);
-    const selects = Array.from(document.querySelectorAll('select'));
-    if (selects.length > 0) {
-      const styleSelect = selects[0];
-      const options = Array.from(styleSelect.querySelectorAll('option'));
-      const matchOption = options.find(opt => 
-        opt.value === imageStyle || 
-        opt.textContent.toLowerCase().includes(imageStyle.toLowerCase())
-      );
+    // 4. Final Verification and Click Create
+    const createBtn = findButtonByText('arrow_forward');
+    if (createBtn) {
+      // Check if image is present in the workspace before clicking
+      const mediaItems = document.querySelectorAll('[data-testid*="media-item"], img[src*="blob"], video');
+      console.log(`📸 Detected ${mediaItems.length} media items in workspace`);
       
-      if (matchOption) {
-        styleSelect.value = matchOption.value;
-        styleSelect.dispatchEvent(new Event('change', { bubbles: true }));
-        console.log(`✅ Image style set to "${imageStyle}"`);
-        await delay(500);
-      } else {
-        console.log(`⚠️ Style "${imageStyle}" not found in options`);
-      }
-    }
-
-    // ===== STEP 6: Fill Image Prompt/Description =====
-    if (imagePromptExtra) {
-      console.log('\n6️⃣ Filling image prompt/description...');
-      const textareas = Array.from(document.querySelectorAll('textarea'));
-      if (textareas.length > 0) {
-        const promptTA = textareas[0];
-        promptTA.focus();
-        promptTA.value = imagePromptExtra;
-        promptTA.dispatchEvent(new Event('input', { bubbles: true }));
-        promptTA.dispatchEvent(new Event('change', { bubbles: true }));
-        console.log(`✅ Prompt filled: "${imagePromptExtra}"`);
-        await delay(800);
-      } else {
-        console.log('⚠️ Prompt textarea not found');
-      }
-    }
-
-    // ===== STEP 7: Click Generate Image Button =====
-    console.log('\n7️⃣ Looking for Generate Image button...');
-    let genBtn = findButtonByText('Generate') || 
-                 findButtonByText('Generate Image') ||
-                 findButtonByText('Create Image') ||
-                 findButtonByText('Make') ||
-                 findButtonByText('Start');
-    
-    if (genBtn && !genBtn.disabled) {
-      console.log('✅ Found Generate button');
-      await delay(500);
-      genBtn.click();
-      console.log('\n🎨 IMAGE GENERATION STARTED! 🖼️');
-      console.log('   ⏳ Generating image with settings:');
-      console.log(`   - Aspect Ratio: ${imageAspectRatio}`);
-      console.log(`   - Style: ${imageStyle}`);
-      console.log(`   - Prompt: ${imagePromptExtra}`);
+      console.log('✨ Clicking Create button...');
+      createBtn.click();
+      console.log('🎉 Generation started!');
     } else {
-      console.log('❌ Generate button not found or disabled');
-      const allBtns = Array.from(document.querySelectorAll('button'))
-        .map(b => ({
-          text: b.textContent?.trim(),
-          disabled: b.disabled
-        }))
-        .filter(b => b.text && b.text.length < 50 && b.text.length > 0);
-      console.log('   Available buttons:', allBtns.slice(0, 10));
-    }
-
-    // Wait for generation to complete (show progress)
-    console.log('\n⏳ Waiting for image generation to complete...');
-    for (let i = 0; i < 12; i++) {
-      await delay(2500);
-      const loadingIndicator = document.querySelector('[aria-busy="true"], .loading, [role="progressbar"]');
-      if (!loadingIndicator) {
-        console.log('✅ Generation complete!');
-        break;
+      console.error('❌ Create button not found or disabled');
+      // Fallback: try pressing Enter in the textbox
+      const textbox = document.querySelector('div[role="textbox"]');
+      if (textbox) {
+        textbox.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }));
+        console.log('⌨️ Sent Enter key as fallback');
       }
-      console.log(`   ${i + 1}. Still generating...`);
     }
-
-    await delay(2000);
-    console.log('\n╔════════════════════════════════════╗');
-    console.log('║  ✅ STAGE 1 COMPLETE: IMAGE READY ║');
-    console.log('╚════════════════════════════════════╝\n');
 
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error('❌ Automation failed:', error);
   }
 }
 
-// Start automation when DOM is ready
-console.log('📌 Flow script loaded');
+// Start automation
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('📌 DOMContentLoaded, starting...');
-    automate();
-  });
+  document.addEventListener('DOMContentLoaded', automate);
 } else {
-  console.log('📌 DOM already ready, starting...');
   automate();
 }
