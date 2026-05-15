@@ -115,6 +115,21 @@ async function setPromptText(text) {
   return false;
 }
 
+async function waitForMedia(timeout = 15000) {
+  console.log('🔍 Waiting for media to appear in workspace...');
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    const mediaItems = document.querySelectorAll('[data-testid*="media-item"], img[src*="blob"], video');
+    if (mediaItems.length > 0) {
+      console.log(`✅ Media detected! (${mediaItems.length} items)`);
+      return true;
+    }
+    await delay(500);
+  }
+  console.log('⚠️ Timeout waiting for media, but proceeding...');
+  return false;
+}
+
 async function automate() {
   const isReady = await waitForFlowReady();
   if (!isReady) {
@@ -144,8 +159,8 @@ async function automate() {
     if (productImage) {
       const success = await uploadImageFromUrl(productImage);
       if (success) {
-        console.log('⏳ Image uploaded, waiting for processing (5s)...');
-        await delay(5000); // Wait longer for image processing
+        // Instead of fixed delay, wait for the media element to appear
+        await waitForMedia(15000);
       }
     }
 
@@ -163,13 +178,9 @@ async function automate() {
     }
     await delay(1000);
 
-    // 4. Final Verification and Click Create
+    // 4. Click Create (arrow_forward)
     const createBtn = findButtonByText('arrow_forward');
     if (createBtn) {
-      // Check if image is present in the workspace before clicking
-      const mediaItems = document.querySelectorAll('[data-testid*="media-item"], img[src*="blob"], video');
-      console.log(`📸 Detected ${mediaItems.length} media items in workspace`);
-      
       console.log('✨ Clicking Create button...');
       createBtn.click();
       console.log('🎉 Generation started!');
