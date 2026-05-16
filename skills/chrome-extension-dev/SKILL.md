@@ -1,26 +1,22 @@
 ---
 name: chrome-extension-dev
-description: Chrome Extension development patterns and debugging for Manifest V3
+description: Chrome Extension development patterns and debugging for Manifest V3 (Flow Product Creator)
 applyTo: ["chrome-flow-extension/**"]
 ---
 
-# Chrome Extension Development
+# Chrome Extension Development (Flow Product Creator)
 
 ## Message Passing Patterns
 - **Background ↔ Popup**: `chrome.runtime.sendMessage({ action: 'name', payload: data })`
 - **Background ↔ Content Script**: `chrome.tabs.sendMessage(tabId, { action: 'name' })`
-- **Always return true** from async `onMessage` listeners
+- **Background ↔ Flow**: `chrome.tabs.sendMessage(flowTabId, { action: 'injectFlowScript' })`
+- **Always return true** from async `onMessage` listeners to keep the channel open.
 
 ## Common Tasks
-- **Add new action**: Define in background.js `onMessage`, send from popup/content
-- **Scrape data**: Meta tags first (`og:title`, `og:description`), then DOM selectors
-- **Debug**: Check service worker at `chrome://extensions` → Inspect views
-
-## File Structure
-- `manifest.json`: Permissions, content scripts, service worker
-- `background.js`: Tab operations, message routing
-- `content-script.js`: Page scraping, DOM manipulation
-- `popup.js`: UI logic, user interactions
+- **Add new action**: Define in `background.js` `onMessage`, send from popup/content.
+- **Scrape data**: Use `scrapeProduct()` in `content-script.js`. Meta tags first, then DOM selectors.
+- **TikTok API**: Use `fetchShowcaseProducts()` in `tiktok-api.js`. Requires login to TikTok Studio.
+- **Automation**: `flow-script.js` handles DOM automation on Google Flow.
 
 ## Debugging Commands
 ```bash
@@ -28,20 +24,22 @@ applyTo: ["chrome-flow-extension/**"]
 chrome://extensions → Flow Product Creator → Inspect views: service worker
 
 # Check content script logs
-Right-click page → Inspect → Console (content script appears here)
+Right-click page → Inspect → Console (select "Content Script" context)
 
-# Check popup console
-Right-click extension icon → Inspect popup
+# Check Playwright Automation
+npm run flow:auto # Run main automation
+npm run flow:explore # Explore Flow UI structure
 ```
 
 ## Permissions Needed
-- `activeTab`: Access current tab
-- `scripting`: Inject scripts
-- `storage`: Chrome storage API
-- `tabs`: Tab management
-- `clipboardWrite`: Copy to clipboard
+- `activeTab`: Access the current active tab.
+- `scripting`: Inject `flow-script.js` or `content-script.js`.
+- `storage`: Persist `videoSettings` and `productData`.
+- `tabs`: Query and open new tabs (for Google Flow).
+- `clipboardWrite`: Copy prompts to user clipboard.
 
-## Content Security Policy
-- No inline scripts in Manifest V3
-- All logic in separate .js files
-- Use ES6 modules with `"type": "module"` in manifest
+## Manifest V3 & ES6
+- **Modules**: Set `"type": "module"` in `manifest.json`.
+- **Imports**: Always include `.js` extension (e.g., `import { fetch } from './api.js'`).
+- **No Inline JS**: All logic must reside in external `.js` files.
+- **CSP**: Ensure external APIs (like TikTok) are compatible with manifest permissions.

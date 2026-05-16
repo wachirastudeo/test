@@ -1,14 +1,17 @@
 # 🎬 Flow Playwright Automation Guide
 
-## Setup
+This guide covers how to run and debug the end-to-end automation for Google Flow using Playwright.
 
-Make sure Chrome is running with remote debugging enabled:
+## 🛠️ Setup
 
+Playwright requires a running instance of Chrome with **Remote Debugging** enabled.
+
+### MacOS
 ```bash
-# Kill existing Chrome
+# 1. Kill existing Chrome processes
 killall "Google Chrome" 2>/dev/null
 
-# Launch Chrome with debugging on port 9222
+# 2. Launch Chrome with debugging port 9222
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
   --remote-debugging-port=9222 \
   --user-data-dir=/tmp/chrome-flow-debug \
@@ -16,114 +19,59 @@ killall "Google Chrome" 2>/dev/null
   > /dev/null 2>&1 &
 ```
 
-Wait for Chrome to fully load (2-3 seconds).
+### Windows (PowerShell)
+```powershell
+Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe" -ArgumentList "--remote-debugging-port=9222 --user-data-dir=$env:TEMP\chrome-flow-debug --load-extension=$(Get-Location)\chrome-flow-extension"
+```
 
-## Running the Automation
+## 🚀 Running the Automation
 
-### Option 1: Using npm script
+### Main Generation Flow
+This script pulls settings from the extension's storage and performs the full generation.
 ```bash
 npm run flow:auto
 ```
 
-### Option 2: Direct node
+### 🔍 UI Exploration & Debugging
+If the Flow UI changes, use the explorer script to dump the current page structure and find new selectors.
 ```bash
-node flow-playwright-auto.js
+npm run flow:explore
 ```
 
-## What It Does
+## ⚙️ How It Works
 
-### 📸 MODE 1: Image Selection
-1. ✅ Finds and clicks "New project" button
-2. ✅ Sets product image URL
-3. ✅ Clicks "Next" or "Continue" button
-4. ✅ Waits for Flow interface to load
+### Phase 1: Project Initialization
+1.  Connects to Chrome via WebSocket (`ws://127.0.0.1:9222`).
+2.  Finds the "New project" button and clicks it.
+3.  Injects the **Product Image URL** into the upload field.
 
-### ⚙️ MODE 2: Settings & Generation
-5. ✅ Sets aspect ratio (9:16, 1:1, 16:9, 4:3)
-6. ✅ Selects image style (Cinematic, Anime, 3D, etc)
-7. ✅ Fills image prompt/description
-8. ✅ Sets camera motion (optional)
-9. ✅ Clicks "Generate" button
-10. ✅ Takes screenshots for debugging
+### Phase 2: Configuration
+4.  **Aspect Ratio**: Sets 9:16 (Vertical), 1:1 (Square), etc.
+5.  **Style**: Applies Cinematic, Studio, Anime, 3D, or Pop Art styles.
+6.  **Prompts**: Fills the image and video description fields.
 
-## Configuration
+### Phase 3: Generation & Verification
+7.  Clicks the **"Generate"** button.
+8.  Waits for the progress indicator to complete.
+9.  Takes debugging screenshots: `flow-before-generate.png` and `flow-after-generate.png`.
 
-Settings are pulled from Chrome extension storage:
-- `productImage` - URL of product image
-- `productName` - Product name
-- `imageAspectRatio` - 9:16, 1:1, 16:9, 4:3 (default: 9:16)
-- `imageStyle` - cinematic, studio, anime, 3d, popart
-- `imagePromptExtra` - Custom image description
-- `videoMotion` - auto, zoom-in, zoom-out, pan-left, pan-right
-- `videoPromptExtra` - Custom video description
+## 🛠️ Troubleshooting
 
-## Debugging
+### ❌ "Could not connect to Chrome"
+- Check if Chrome is actually running: `ps aux | grep "Google Chrome"`
+- Verify the port: `curl http://127.0.0.1:9222/json/version`
+- Ensure no other process is using port 9222.
 
-The script will:
-- Print button names and states to console
-- Save screenshots: `flow-before-generate.png` and `flow-after-generate.png`
-- Show all visible buttons if generate button is not found
-- Log each step with ✅/⚠️/❌ indicators
+### ❌ "Button not found"
+The Google Flow UI uses dynamic classes. The automation relies on **ARIA labels** and **Text content**.
+- Run `npm run flow:explore` to see what buttons Playwright can "see".
+- Check `flow-before-generate.png` to see where the script got stuck.
 
-## Troubleshooting
+### ⚠️ "Extension settings not loading"
+- Open the extension popup in the debug Chrome instance.
+- Ensure you've clicked **"เริ่มสร้างภาพและวิดีโอบน Flow"** at least once to save settings to storage.
 
-**Chrome won't connect:**
-```bash
-# Check if Chrome is running
-ps aux | grep "Google Chrome"
-
-# Check if port 9222 is open
-curl http://127.0.0.1:9222/json/version
-```
-
-**Buttons not found:**
-- Check the `flow-before-generate.png` screenshot
-- Manually inspect the website to find button text
-- Update button selectors in `flow-playwright-auto.js`
-
-**Extension settings not loading:**
-- Make sure extension is loaded with `--load-extension`
-- Check that `videoSettings` are saved in Chrome storage
-- Manually set values in the extension popup first
-
-## Advanced Usage
-
-### Set video settings before running automation:
-
-```bash
-# Open extension popup in Chrome
-# Fill in product image and settings
-# Click "เริ่มสร้างภาพและวิดีโอบน Flow"
-# This saves settings to Chrome storage
-# Then run: npm run flow:auto
-```
-
-## Console Output Example
-
-```
-🚀 Starting Flow Playwright Automation...
-
-🔌 Connecting to Chrome DevTools Protocol...
-✅ Connected to Chrome
-
-📍 Current URL: https://labs.google/fx/tools/flow
-📋 Getting video settings...
-⚙️  Settings: {
-  productImage: 'https://via.placeholder.com/800x800...',
-  imageAspectRatio: '9:16',
-  imageStyle: 'cinematic',
-  ...
-}
-
-====== STARTING AUTOMATION ======
-
-📸 MODE 1: Image Selection
-
-1️⃣  Looking for "New project" button...
-✅ Found "New project" button
-✅ Clicked "New project"
-
-2️⃣  Setting product image...
-✅ Set image: https://via.placeholder.com/800x800...
-...
-```
+## 📁 Key Files
+- `flow-playwright-auto.js`: The main automation logic.
+- `explore-flow.js`: Debugging tool for UI inspection.
+- `launch-chrome.sh`: Helper script to launch Chrome with correct flags.
