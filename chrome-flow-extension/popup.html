@@ -95,6 +95,25 @@
                         style="resize: vertical;"></textarea>
                 </div>
 
+                <div class="field">
+                    <label class="field-label" for="image-count">จำนวนภาพสำรอง (Variations)</label>
+                    <input id="image-count" class="input" type="number" min="1" max="8" value="3" />
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="image-strength">ความแรงของสไตล์ (Style Strength)</label>
+                    <input id="image-strength" class="input" type="range" min="0" max="100" value="80" />
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="image-quality">คุณภาพ (Quality)</label>
+                    <select id="image-quality" class="select">
+                        <option value="standard">Standard</option>
+                        <option value="high" selected>High</option>
+                        <option value="ultra">Ultra</option>
+                    </select>
+                </div>
+
                 <!-- Video Generation Settings -->
                 <h3
                     style="margin-top: 20px; margin-bottom: 8px; font-size: 13px; color: var(--accent); font-weight: 600;">
@@ -108,6 +127,57 @@
                         <option value="pan-left">Pan Left (แพนซ้าย)</option>
                         <option value="pan-right">Pan Right (แพนขวา)</option>
                     </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="video-duration">ระยะเวลา (Video Duration)</label>
+                    <input id="video-duration" class="input" type="number" min="3" max="60" value="15" />
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="video-fps">เฟรมต่อวินาที (FPS)</label>
+                    <select id="video-fps" class="select">
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                        <option value="30" selected>30</option>
+                        <option value="60">60</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="video-transition">ทรานซิชัน (Transition)</label>
+                    <select id="video-transition" class="select">
+                        <option value="cut">Cut</option>
+                        <option value="fade">Fade</option>
+                        <option value="crosszoom">Cross Zoom</option>
+                        <option value="slide">Slide</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="video-soundtrack">เสียงประกอบ (Soundtrack)</label>
+                    <select id="video-soundtrack" class="select">
+                        <option value="none">ไม่มี</option>
+                        <option value="upbeat">Upbeat</option>
+                        <option value="soft">Soft Ambient</option>
+                        <option value="dramatic">Dramatic</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="video-overlay-text">ข้อความทับวิดีโอ (Overlay Text)</label>
+                    <input id="video-overlay-text" class="input" type="text" placeholder="เช่น: สินค้าลดราคา 50%" />
+                </div>
+
+                <div class="field-inline" style="gap:12px; align-items:center;">
+                    <label style="display:flex; gap:8px; align-items:center;">
+                        <input id="auto-caption" type="checkbox" />
+                        สร้างคำบรรยายอัตโนมัติ (Auto captions)
+                    </label>
+                    <label style="display:flex; gap:8px; align-items:center; margin-left:8px;">
+                        <input id="generate-images-first" type="checkbox" checked />
+                        สร้างภาพก่อนแล้วจึงทำวิดีโอ
+                    </label>
                 </div>
 
                 <div class="field">

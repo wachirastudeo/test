@@ -51,16 +51,29 @@ async function generateVideo() {
   const imageStyle = document.getElementById('image-style').value;
   const imageAspectRatio = document.getElementById('image-aspect-ratio').value;
   const imagePromptExtra = document.getElementById('image-prompt-extra').value;
+  const imageCount = parseInt(document.getElementById('image-count').value, 10) || 1;
+  const imageStrength = parseInt(document.getElementById('image-strength').value, 10) || 80;
+  const imageQuality = document.getElementById('image-quality').value;
   const videoMotion = document.getElementById('video-motion').value;
   const videoPromptExtra = document.getElementById('video-prompt-extra').value;
+  const videoDuration = parseInt(document.getElementById('video-duration').value, 10) || 15;
+  const videoFps = parseInt(document.getElementById('video-fps').value, 10) || 30;
+  const videoTransition = document.getElementById('video-transition').value;
+  const videoSoundtrack = document.getElementById('video-soundtrack').value;
+  const videoOverlayText = document.getElementById('video-overlay-text').value || '';
+  const autoCaption = !!document.getElementById('auto-caption').checked;
+  const generateImagesFirst = !!document.getElementById('generate-images-first').checked;
   const productName = document.getElementById('product-name-input').value;
   const productImage = document.getElementById('product-image-input').value;
   
   console.log('💾 Saving video settings...');
   await chrome.storage.local.set({ 
     videoSettings: { 
-      imageStyle, imageAspectRatio, imagePromptExtra, 
-      videoMotion, videoPromptExtra, 
+      imageStyle, imageAspectRatio, imagePromptExtra,
+      imageCount, imageStrength, imageQuality,
+      videoMotion, videoPromptExtra,
+      videoDuration, videoFps, videoTransition, videoSoundtrack, videoOverlayText,
+      autoCaption, generateImagesFirst,
       productName, productImage 
     },
     autoGenerateVideo: true  // Flag to auto-generate after opening

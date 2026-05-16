@@ -162,7 +162,12 @@ async function automate() {
   // Clear auto flag so it doesn't run again on reload
   await chrome.storage.local.set({ autoGenerateVideo: false });
 
-  const { productImage, productName, imagePromptExtra, imageAspectRatio = '9:16' } = videoSettings;
+  const {
+    productImage, productName, imagePromptExtra,
+    imageAspectRatio = '9:16', imageStyle, imageCount, imageStrength, imageQuality,
+    videoMotion, videoDuration, videoFps, videoTransition, videoSoundtrack, videoOverlayText,
+    autoCaption, generateImagesFirst
+  } = videoSettings;
   console.log('🚀 Starting generation for TikTok product:', productName);
 
   try {
@@ -176,13 +181,30 @@ async function automate() {
     }
 
     // 2. Set Aspect Ratio
-    if (imageAspectRatio === '9:16') {
-      await setAspectRatio('9:16');
+    if (imageAspectRatio) {
+      await setAspectRatio(imageAspectRatio);
       await delay(1000);
     }
 
     // 3. Fill Prompt
-    const finalPrompt = `${productName}. ${imagePromptExtra || ''}`.trim();
+    // Build enhanced prompt including styling & video instructions
+    const promptParts = [];
+    promptParts.push(productName || 'Product');
+    if (imagePromptExtra) promptParts.push(imagePromptExtra);
+    if (imageStyle) promptParts.push(`Style: ${imageStyle}`);
+    if (imageQuality) promptParts.push(`Quality: ${imageQuality}`);
+    if (imageStrength) promptParts.push(`Style strength: ${imageStrength}%`);
+    if (imageCount) promptParts.push(`Variations: ${imageCount}`);
+    if (videoMotion) promptParts.push(`Camera motion: ${videoMotion}`);
+    if (videoDuration) promptParts.push(`Duration: ${videoDuration}s`);
+    if (videoFps) promptParts.push(`FPS: ${videoFps}`);
+    if (videoTransition) promptParts.push(`Transition: ${videoTransition}`);
+    if (videoSoundtrack && videoSoundtrack !== 'none') promptParts.push(`Soundtrack: ${videoSoundtrack}`);
+    if (videoOverlayText) promptParts.push(`Overlay text: ${videoOverlayText}`);
+    if (autoCaption) promptParts.push('Include auto-generated captions.');
+    if (generateImagesFirst) promptParts.push('Generate image variations first, then compose video.');
+
+    const finalPrompt = promptParts.join('. ').trim();
     const promptSuccess = await setPromptText(finalPrompt);
     if (!promptSuccess) {
       console.error('❌ Failed to fill prompt');

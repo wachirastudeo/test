@@ -28,10 +28,7 @@ Thumbs.db
 *.swo
 
 # Local scripts
-explore-flow.js
-flow-playwright-auto.js
-launch-chrome.sh
-PLAYWRIGHT-GUIDE.md
+# Keep Playwright helper scripts and docs tracked because package.json exposes
+# npm scripts for this workflow.
 
 # Project specific
-package-lock.json
