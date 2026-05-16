@@ -4,8 +4,7 @@ function findButtonByText(text) {
   const elements = Array.from(document.querySelectorAll('button, [role="button"], a, div, span'));
   return elements.find(el => {
     const content = (el.textContent || el.innerText || '').trim();
-    // Support for both text and Material Icon names
-    return content.toLowerCase().includes(text.toLowerCase()) || 
+    return content.toLowerCase().includes(text.toLowerCase()) ||
            (el.getAttribute('aria-label') || '').toLowerCase().includes(text.toLowerCase());
   });
 }
@@ -15,13 +14,11 @@ async function uploadImageFromUrl(url) {
   try {
     const response = await fetch(url);
     const blob = await response.blob();
-    const fileName = url.startsWith('data:') ? 'uploaded-product.jpg' : (url.split('/').pop() || 'product.jpg');
+    const fileName = url.split('/').pop() || 'product.jpg';
     const file = new File([blob], fileName, { type: blob.type });
 
-    // Find the hidden file input
     let fileInput = document.querySelector('input[type="file"]');
-    
-    // If not found, try to trigger the Add Media menu first
+
     if (!fileInput) {
       console.log('🔍 File input not found, clicking Add Media...');
       const addBtn = findButtonByText('add') || findButtonByText('Add Media');
@@ -55,7 +52,7 @@ async function waitForFlowReady() {
   while (Date.now() - start < 30000) {
     const textbox = document.querySelector('div[role="textbox"]');
     const newProjectBtn = findButtonByText('New project') || findButtonByText('Create with Flow');
-    
+
     if (textbox) {
       console.log('✅ Workspace ready');
       return 'workspace';
@@ -73,25 +70,21 @@ async function waitForFlowReady() {
 async function setAspectRatio(ratio = '9:16') {
   console.log(`📐 Setting aspect ratio to ${ratio}...`);
   try {
-    // 1. Click the settings/model trigger to open the menu
-    const trigger = document.querySelector('button:has(i[class*="crop_"])') || 
-                    findButtonByText('Nano Banana Pro'); // Fallback to model name
-    
+    const trigger = document.querySelector('button:has(i[class*="crop_"])') ||
+                    findButtonByText('Nano Banana Pro');
+
     if (trigger) {
       trigger.click();
       await delay(800);
 
-      // 2. Click the 9:16 (Portrait) button
-      // The selector found was button[id$="-trigger-PORTRAIT"] or role="tab"
-      const portraitBtn = document.querySelector('button[id$="-trigger-PORTRAIT"]') || 
+      const portraitBtn = document.querySelector('button[id$="-trigger-PORTRAIT"]') ||
                           findButtonByText('9:16') ||
                           Array.from(document.querySelectorAll('button[role="tab"]')).find(b => b.textContent.includes('9:16'));
-      
+
       if (portraitBtn) {
         portraitBtn.click();
         console.log('✅ Aspect ratio set to 9:16');
         await delay(500);
-        // Usually clicking the ratio might close the menu, but if not, click trigger again or elsewhere
       } else {
         console.error('❌ Could not find 9:16 button in menu');
       }
@@ -108,17 +101,10 @@ async function setPromptText(text) {
   if (textbox) {
     console.log('✍️ Filling prompt...');
     textbox.focus();
-    
-    // Clear existing text
     textbox.innerText = '';
-    
-    // Use execCommand for better React/State compatibility
     document.execCommand('insertText', false, text);
-    
-    // Trigger events as backup
     textbox.dispatchEvent(new Event('input', { bubbles: true }));
     textbox.dispatchEvent(new Event('change', { bubbles: true }));
-    
     console.log('✅ Prompt filled using execCommand');
     return true;
   }
@@ -146,10 +132,9 @@ async function automate() {
     console.error('❌ Flow UI not ready after 30s');
     return;
   }
-  
+
   await delay(2000);
 
-  // Get settings from extension storage
   const { videoSettings, autoGenerateVideo } = await new Promise(resolve => {
     chrome.storage.local.get(['videoSettings', 'autoGenerateVideo'], resolve);
   });
@@ -159,66 +144,31 @@ async function automate() {
     return;
   }
 
-  // Clear auto flag so it doesn't run again on reload
   await chrome.storage.local.set({ autoGenerateVideo: false });
 
-  const {
-    productImage, productName, imagePromptExtra,
-    imageAspectRatio = '9:16', imageStyle, imageComposition, imageScene, imageMood,
-    videoAngle,
-    personPresence, personGender, personAge, personStyle,
-    videoMotion, videoPace, videoPromptExtra,
-    speechMode, voiceStyle, scriptStyle, voiceEmotion, negativePrompt
-  } = videoSettings;
+  const { productImage, productName, imagePromptExtra, imageAspectRatio = '9:16' } = videoSettings;
   console.log('🚀 Starting generation for TikTok product:', productName);
 
   try {
-    // 1. Upload Image (from TikTok product data)
     if (productImage) {
       const success = await uploadImageFromUrl(productImage);
       if (success) {
-        // Instead of fixed delay, wait for the media element to appear
         await waitForMedia(30000);
       }
     }
 
-    // 2. Set Aspect Ratio
-    if (imageAspectRatio) {
-      await setAspectRatio(imageAspectRatio);
+    if (imageAspectRatio === '9:16') {
+      await setAspectRatio('9:16');
       await delay(1000);
     }
 
-    // 3. Fill Prompt
-    // Build enhanced prompt including styling & video instructions
-    const promptParts = [];
-    promptParts.push(productName || 'Product');
-    if (imageStyle) promptParts.push(`สร้างภาพนิ่งก่อน: ${imageStyle}`);
-    if (imageComposition) promptParts.push(`รูปแบบภาพนิ่ง: ${imageComposition}`);
-    if (imageScene) promptParts.push(`ฉาก/พื้นหลังภาพนิ่ง: ${imageScene}`);
-    if (imageMood) promptParts.push(`บรรยากาศภาพนิ่ง: ${imageMood}`);
-    if (personPresence) promptParts.push(`คนในภาพนิ่ง: ${personPresence}`);
-    if (personGender) promptParts.push(`เพศ/ลักษณะคนในภาพนิ่ง: ${personGender}`);
-    if (personAge) promptParts.push(`ช่วงอายุคนในภาพนิ่ง: ${personAge}`);
-    if (personStyle) promptParts.push(`สไตล์คนในภาพนิ่ง: ${personStyle}`);
-    if (imagePromptExtra) promptParts.push(`รายละเอียดภาพนิ่ง: ${imagePromptExtra}`);
-    if (videoAngle) promptParts.push(`มุมขาย: ${videoAngle}`);
-    if (videoMotion) promptParts.push(`การเคลื่อนไหวกล้อง: ${videoMotion}`);
-    if (videoPace) promptParts.push(`จังหวะวิดีโอ: ${videoPace}`);
-    if (videoPromptExtra) promptParts.push(videoPromptExtra);
-    if (speechMode) promptParts.push(`บทพูด/เสียงพูด: ${speechMode}`);
-    if (voiceStyle) promptParts.push(`สไตล์เสียงไทย: ${voiceStyle}`);
-    if (scriptStyle) promptParts.push(`แนวบทพูด: ${scriptStyle}`);
-    if (voiceEmotion) promptParts.push(`อารมณ์เสียง: ${voiceEmotion}`);
-    if (negativePrompt) promptParts.push(`หลีกเลี่ยง: ${negativePrompt}`);
-
-    const finalPrompt = promptParts.join('. ').trim();
+    const finalPrompt = `${productName}. ${imagePromptExtra || ''}`.trim();
     const promptSuccess = await setPromptText(finalPrompt);
     if (!promptSuccess) {
       console.error('❌ Failed to fill prompt');
     }
     await delay(1000);
 
-    // 4. Click Create (arrow_forward)
     const createBtn = findButtonByText('arrow_forward');
     if (createBtn) {
       console.log('✨ Clicking Create button...');
@@ -226,20 +176,17 @@ async function automate() {
       console.log('🎉 Generation started!');
     } else {
       console.error('❌ Create button not found or disabled');
-      // Fallback: try pressing Enter in the textbox
       const textbox = document.querySelector('div[role="textbox"]');
       if (textbox) {
         textbox.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }));
         console.log('⌨️ Sent Enter key as fallback');
       }
     }
-
   } catch (error) {
     console.error('❌ Automation failed:', error);
   }
 }
 
-// Start automation
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', automate);
 } else {
