@@ -81,143 +81,254 @@
                     </div>
                 </div>
 
-                <!-- Image Generation Settings -->
-                <h3
-                    style="margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: var(--primary); font-weight: 600;">
-                    1. ตั้งค่าสร้างภาพใหม่ (Image Settings)</h3>
+                <div class="settings-block">
+                        <h3 class="settings-title settings-title--image">
+                            1. ตั้งค่าภาพนิ่งที่จะสร้างก่อน</h3>
+                    <div class="settings-grid">
                 <div class="field">
-                    <label class="field-label" for="image-style">สไตล์ภาพ (Image Style)</label>
+                    <label class="field-label" for="image-style">สไตล์ภาพ</label>
                     <select id="image-style" class="select">
-                        <option value="cinematic">Cinematic (สมจริง)</option>
-                        <option value="studio">Studio Lighting (จัดแสงสตูดิโอ)</option>
-                        <option value="anime">Anime (การ์ตูน)</option>
-                        <option value="3d">3D Render (ภาพสามมิติ)</option>
-                        <option value="popart">Pop Art (สีสันสดใส)</option>
+                        <option value="ให้ระบบเลือกสไตล์ภาพที่เหมาะกับสินค้าและฉาก">Auto ให้ระบบเลือก</option>
+                        <option value="ภาพโฆษณาสินค้าสมจริง แสงสวย คมชัด">โฆษณาสินค้าสมจริง</option>
+                        <option value="ภาพสินค้าในสตูดิโอ พื้นหลังสะอาด แสงนุ่ม">สตูดิโอสะอาด</option>
+                        <option value="ภาพสินค้าแนวพรีเมียม หรูหรา ดูแพง">พรีเมียมหรูหรา</option>
+                        <option value="ภาพสินค้าแนวไลฟ์สไตล์ ใช้งานจริงในชีวิตประจำวัน">ไลฟ์สไตล์ใช้งานจริง</option>
+                        <option value="ภาพสินค้าแนว TikTok สดใส ดึงดูดสายตา">TikTok สดใส</option>
+                        <option value="ทำให้สินค้ามีชีวิต มีท่าทาง สีหน้า หรือบุคลิกน่ารัก แต่ยังจำสินค้าเดิมได้ชัด">สินค้ามีชีวิต</option>
+                        <option value="ภาพการ์ตูนโฆษณาสินค้า สีสวย น่ารัก ดูเป็นมิตร">การ์ตูน</option>
+                        <option value="ภาพสินค้าแบบ 3D render คมชัด แสงเงาสวย รายละเอียดพรีเมียม">3D เรนเดอร์</option>
+                        <option value="ภาพสินค้าแนวแอนิเมชัน 3D สดใส เหมาะกับคลิปโซเชียล">แอนิเมชัน 3D</option>
                     </select>
                 </div>
 
                 <div class="field">
-                    <label class="field-label" for="image-aspect-ratio">อัตราส่วนภาพ (Aspect Ratio)</label>
-                    <select id="image-aspect-ratio" class="select">
-                        <option value="1:1">1:1 (สี่เหลี่ยมจัตุรัส)</option>
-                        <option value="9:16" selected>9:16 (ยาว)</option>
-                        <option value="16:9">16:9 (ไวด์)</option>
-                        <option value="4:3">4:3 (มาตรฐาน)</option>
+                    <label class="field-label" for="image-composition">รูปแบบภาพ</label>
+                    <select id="image-composition" class="select">
+                        <option value="ให้ระบบเลือกรูปแบบภาพที่เหมาะกับสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="สินค้าเป็นจุดเด่นกลางภาพ รายละเอียดชัด พื้นหลังไม่รก">สินค้าเด่นกลางภาพ</option>
+                        <option value="สินค้าอยู่บนโต๊ะหรือพื้นผิวสวยงาม พร้อมของประกอบฉากเล็กน้อย">จัดพร็อพสวยงาม</option>
+                        <option value="ภาพมือกำลังถือหรือใช้งานสินค้า ให้ดูเป็นธรรมชาติ">มือกำลังใช้สินค้า</option>
+                        <option value="นางแบบหรือนายแบบถือสินค้าแบบรีวิว ดูน่าเชื่อถือ">คนถือสินค้ารีวิว</option>
+                        <option value="ภาพเปิดกล่องสินค้า เห็นแพ็กเกจและตัวสินค้า">เปิดกล่องสินค้า</option>
                     </select>
                 </div>
 
                 <div class="field">
-                    <label class="field-label" for="image-prompt-extra">รายละเอียดภาพ (Image Prompt)</label>
-                    <textarea id="image-prompt-extra" class="input" rows="2"
-                        placeholder="เช่น: สินค้าวางบนโขดหิน, ฉากหลังป่าไม้ชุ่มชื้น..."
+                    <label class="field-label" for="person-presence">คนในภาพ</label>
+                    <select id="person-presence" class="select">
+                        <option value="ให้ระบบเลือกว่าควรมีคน ไม่มีคน หรือเห็นแต่มือ ตามความเหมาะสมของสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="ไม่มีคน ให้เห็นแต่สินค้าเป็นจุดเด่น">ไม่มีคน เห็นแต่สินค้า</option>
+                        <option value="เห็นเฉพาะมือกำลังถือหรือใช้งานสินค้า ไม่เห็นหน้า">เห็นแต่มือ</option>
+                        <option value="มีคนถือสินค้าและรีวิวให้ดูเป็นธรรมชาติ">มีคนรีวิวสินค้า</option>
+                        <option value="มีคนใช้งานสินค้าให้เห็นวิธีใช้จริง">มีคนสาธิตการใช้</option>
+                        <option value="มีครีเอเตอร์ถ่ายแบบเซลฟี่เหมือนคลิปผู้ใช้จริง">ครีเอเตอร์เซลฟี่</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="person-gender">เพศ/ลักษณะคน</label>
+                    <select id="person-gender" class="select">
+                        <option value="ไม่ระบุเพศ เลือกให้เหมาะกับสินค้า">ให้ระบบเลือก</option>
+                        <option value="ผู้หญิงรีวิวสินค้า ดูเป็นธรรมชาติและน่าเชื่อถือ">ผู้หญิง</option>
+                        <option value="ผู้ชายรีวิวสินค้า ดูเป็นธรรมชาติและน่าเชื่อถือ">ผู้ชาย</option>
+                        <option value="คู่ชายหญิงใช้งานหรือรีวิวสินค้าร่วมกัน">คู่ชายหญิง</option>
+                        <option value="กลุ่มเพื่อน 2-3 คน ใช้งานหรือพูดถึงสินค้า">กลุ่มเพื่อน</option>
+                        <option value="ครอบครัวใช้งานสินค้าในชีวิตประจำวัน">ครอบครัว</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="person-age">ช่วงอายุ</label>
+                    <select id="person-age" class="select">
+                        <option value="วัยทำงานตอนต้น อายุประมาณ 20-30 ปี">วัย 20-30</option>
+                        <option value="ผู้ใหญ่ทำงาน อายุประมาณ 30-45 ปี">วัย 30-45</option>
+                        <option value="ผู้ใหญ่ดูน่าเชื่อถือ อายุประมาณ 45-60 ปี">วัย 45-60</option>
+                        <option value="ผู้สูงอายุที่ดูสุขภาพดีและเป็นมิตร">ผู้สูงอายุ</option>
+                        <option value="วัยรุ่นหรือวัยมหาลัย สดใส ทันสมัย">วัยรุ่น/มหาลัย</option>
+                        <option value="ไม่ระบุอายุ เลือกให้เหมาะกับสินค้า">ให้ระบบเลือก</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="person-style">สไตล์คนในภาพ</label>
+                    <select id="person-style" class="select">
+                        <option value="ให้ระบบเลือกลุคคนในภาพให้เหมาะกับสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="แต่งตัวเรียบง่ายเหมือนผู้ใช้จริง ไม่ดูเป็นโฆษณาเกินไป">ผู้ใช้จริงธรรมชาติ</option>
+                        <option value="ลุคครีเอเตอร์โซเชียล สดใส มั่นใจ">ครีเอเตอร์โซเชียล</option>
+                        <option value="ลุคพรีเมียม แต่งตัวดี ภาพลักษณ์ดูแพง">ลุคพรีเมียม</option>
+                        <option value="ลุคแม่บ้านหรือคนใช้งานจริงในบ้าน ดูเข้าถึงง่าย">คนใช้งานจริงในบ้าน</option>
+                        <option value="ลุคผู้เชี่ยวชาญ แนะนำสินค้าแบบน่าเชื่อถือ">ผู้เชี่ยวชาญแนะนำ</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="image-scene">ฉาก/พื้นหลังภาพ</label>
+                    <select id="image-scene" class="select">
+                        <option value="ให้ระบบเลือกฉากและพื้นหลังภาพที่เหมาะกับสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="พื้นหลังมินิมอลสะอาด ทำให้สินค้าเด่น">มินิมอลสะอาด</option>
+                        <option value="พื้นหลังแบบบ้านจริง ดูใช้งานได้ในชีวิตประจำวัน">บ้านจริง ใช้งานจริง</option>
+                        <option value="พื้นหลังธรรมชาติ มีต้นไม้หรือแสงแดดนุ่ม">ธรรมชาติ สดชื่น</option>
+                        <option value="พื้นหลังหรูหรา มีวัสดุเงา แก้ว โลหะ หรือหินอ่อน">หรูหรา พรีเมียม</option>
+                        <option value="พื้นหลังสีสดใส เหมาะกับคอนเทนต์สั้นบนโซเชียล">สีสด ดึงสายตา</option>
+                        <option value="สตูดิโอสว่างสะอาด เหมาะกับโฆษณาสินค้า">สตูดิโอสว่างสะอาด</option>
+                        <option value="ห้องนั่งเล่นอบอุ่น มีแสงธรรมชาติ">ห้องนั่งเล่น</option>
+                        <option value="ห้องน้ำโมเดิร์น เคาน์เตอร์สะอาด">ห้องน้ำ</option>
+                        <option value="โต๊ะเครื่องแป้งในห้องนอน ดูมินิมอล">โต๊ะเครื่องแป้ง</option>
+                        <option value="เคาน์เตอร์ครัวสว่าง สะอาด ใช้งานจริง">ห้องครัว</option>
+                        <option value="โต๊ะคาเฟ่สวยงาม แสงธรรมชาติ">คาเฟ่</option>
+                        <option value="สวนกลางแจ้ง แสงแดดนุ่ม ดูสดชื่น">สวนกลางแจ้ง</option>
+                        <option value="ชั้นวางสินค้าแบบร้านพรีเมียม">ชั้นวางสินค้า</option>
+                        <option value="โกดังสินค้า มีชั้นวาง กล่องพัสดุ และบรรยากาศโลจิสติกส์">โกดังสินค้า</option>
+                        <option value="สายพานลำเลียงสินค้าในโรงงานหรือคลังสินค้า ดูเคลื่อนไหวทันสมัย">สายพานลำเลียง</option>
+                        <option value="โรงงานผลิตสินค้า สะอาด เป็นระเบียบ มีเครื่องจักรประกอบฉาก">โรงงานผลิต</option>
+                        <option value="ห้องแพ็กสินค้า มีกล่อง เทป และโต๊ะแพ็กของ">ห้องแพ็กสินค้า</option>
+                        <option value="ร้านค้าปลีกหรือหน้าร้านจริง มีสินค้าโชว์บนชั้น">ร้านค้าจริง</option>
+                        <option value="บูธแสดงสินค้าในงานอีเวนต์หรือห้าง ดูมืออาชีพ">บูธแสดงสินค้า</option>
+                        <option value="custom">กรอกเอง</option>
+                    </select>
+                </div>
+
+                <div class="field" id="custom-image-scene-field" hidden>
+                    <label class="field-label" for="custom-image-scene">กรอกฉากเอง</label>
+                    <input id="custom-image-scene" class="input" type="text"
+                        placeholder="เช่น โกดังพัสดุกลางคืน, สายพานผลิตสินค้าแบบล้ำๆ" />
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="image-mood">บรรยากาศภาพ</label>
+                    <select id="image-mood" class="select">
+                        <option value="ให้ระบบเลือกบรรยากาศภาพที่เหมาะกับสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="แสงสวยสะอาด โฟกัสสินค้าคมชัด เงานุ่ม ดูมืออาชีพ">สะอาด คมชัด มืออาชีพ</option>
+                        <option value="บรรยากาศเหมือนรีวิวจริง ถ่ายด้วยมือถือ แสงธรรมชาติ ดูน่าเชื่อถือ">รีวิวจริงธรรมชาติ</option>
+                        <option value="โทนอุ่น นุ่ม สบายตา เหมาะกับภาพไลฟ์สไตล์">อบอุ่น ไลฟ์สไตล์</option>
+                        <option value="ภาพดูหรู มีแสงสะท้อน เงาสวย แบบโฆษณาแพง">หรูหรา ดูแพง</option>
+                        <option value="สดใส เร็ว ดึงดูดสายตา เหมาะกับคอนเทนต์สั้น">สดใส ดึงสายตา</option>
+                        <option value="สงบ ผ่อนคลาย มีไอน้ำหรือแสงนุ่ม เหมาะกับสินค้าแนวดูแลตัวเอง">สงบ ผ่อนคลาย</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="image-prompt-extra">ฉาก/รายละเอียดภาพ</label>
+                    <textarea id="image-prompt-extra" class="input input--textarea" rows="4"
+                        placeholder="เช่น: สินค้าวางเด่นบนโต๊ะ มีแสงธรรมชาติ สะอาด พรีเมียม"
+                        style="resize: vertical;"></textarea>
+                </div>
+                    </div>
+                </div>
+
+                <div class="settings-block">
+                        <h3 class="settings-title settings-title--video">
+                            2. ตั้งค่าวิดีโอที่จะสร้างต่อจากภาพนิ่ง</h3>
+                    <div class="settings-grid">
+
+                <div class="field">
+                    <label class="field-label" for="video-angle">มุมขาย</label>
+                    <select id="video-angle" class="select">
+                        <option value="ให้ระบบเลือกมุมขายที่เหมาะกับสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="เน้นปัญหาของลูกค้า แล้วโชว์ว่าสินค้าช่วยแก้ได้อย่างไร">แก้ปัญหา</option>
+                        <option value="เน้นผลลัพธ์หลังใช้สินค้า ให้เห็นความเปลี่ยนแปลง">โชว์ผลลัพธ์</option>
+                        <option value="เน้นความน่าเชื่อถือ เหมือนผู้ใช้จริงแนะนำต่อ">รีวิวน่าเชื่อถือ</option>
+                        <option value="เน้นความคุ้มค่า โปรโมชั่น หรือเหตุผลที่ควรซื้อวันนี้">โปร/ความคุ้มค่า</option>
+                        <option value="เน้นภาพลักษณ์พรีเมียม ทำให้สินค้าอยากได้มากขึ้น">ภาพลักษณ์พรีเมียม</option>
+                        <option value="เน้นความแปลกใหม่ ดึงดูดให้หยุดดูใน 3 วินาทีแรก">แปลกใหม่ หยุดเลื่อน</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="video-motion">การเคลื่อนไหวกล้อง</label>
+                    <select id="video-motion" class="select">
+                        <option value="ให้ระบบเลือกการเคลื่อนไหวกล้องที่เหมาะกับภาพนิ่ง">Auto ให้ระบบเลือก</option>
+                        <option value="กล้องค่อยๆ ซูมเข้าไปที่สินค้าอย่างนุ่มนวล">ซูมเข้า</option>
+                        <option value="กล้องแพนช้าๆ ผ่านสินค้าให้เห็นรายละเอียด">แพนผ่านสินค้า</option>
+                        <option value="กล้องหมุนรอบสินค้าเล็กน้อยให้เห็นมิติ">หมุนรอบสินค้า</option>
+                        <option value="กล้องนิ่งแต่มีมือหรือสินค้าเคลื่อนไหวในเฟรม">กล้องนิ่ง มือขยับ</option>
+                        <option value="ตัดภาพเร็วหลายมุม เหมาะกับโฆษณาสั้น">ตัดเร็วหลายมุม</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="video-pace">จังหวะวิดีโอ</label>
+                    <select id="video-pace" class="select">
+                        <option value="ให้ระบบเลือกจังหวะวิดีโอที่เหมาะกับสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="จังหวะเร็ว กระชับ เหมาะกับโฆษณาสั้น">เร็ว กระชับ</option>
+                        <option value="จังหวะปานกลาง ดูเข้าใจง่าย เห็นรายละเอียดสินค้า">ปานกลาง เข้าใจง่าย</option>
+                        <option value="จังหวะช้า พรีเมียม เน้นความสวยของสินค้า">ช้า พรีเมียม</option>
+                        <option value="จังหวะเหมือนรีวิวจริง ไม่เนี้ยบเกินไป">ธรรมชาติแบบรีวิวจริง</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="speech-mode">บทพูด/เสียงพูด</label>
+                    <select id="speech-mode" class="select">
+                        <option value="ให้ระบบเลือกว่าควรมีบทพูดหรือไม่ตามความเหมาะสม">Auto ให้ระบบเลือก</option>
+                        <option value="ไม่มีบทพูด ใช้ภาพสินค้าเป็นหลัก">ไม่มีบทพูด</option>
+                        <option value="มีเสียงพูดภาษาไทย พูดตามบทแบบรีวิวสินค้า">มีบทพูดภาษาไทย</option>
+                        <option value="มีคนพูดหน้ากล้องแบบครีเอเตอร์รีวิวสินค้า">พูดหน้ากล้อง</option>
+                        <option value="มีเสียงบรรยายภาษาไทย แต่ไม่ต้องเห็นปากพูด">เสียงบรรยายอย่างเดียว</option>
+                        <option value="มีบทพูดสั้นมาก เฉพาะประโยคเปิดคลิปและปิดท้าย">พูดสั้นมาก</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="voice-style">สไตล์เสียงไทย</label>
+                    <select id="voice-style" class="select">
+                        <option value="ให้ระบบเลือกสไตล์เสียงไทยที่เหมาะกับสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="เสียงไทยธรรมชาติ เป็นกันเอง เหมือนคนรีวิวจริง">ธรรมชาติ เป็นกันเอง</option>
+                        <option value="เสียงไทยสดใส พูดเร็ว กระชับ เหมาะกับ TikTok">สดใส พูดไว</option>
+                        <option value="เสียงไทยนุ่ม สุภาพ น่าเชื่อถือ">สุภาพ น่าเชื่อถือ</option>
+                        <option value="เสียงไทยพรีเมียม ใจเย็น ดูแพง">พรีเมียม ดูแพง</option>
+                        <option value="เสียงไทยตื่นเต้น มีพลัง เหมาะกับโปรโมชัน">ตื่นเต้น มีพลัง</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="script-style">แนวบทพูด</label>
+                    <select id="script-style" class="select">
+                        <option value="ให้ระบบเลือกแนวบทพูดที่เหมาะกับสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="บทพูดแบบ hook ตามด้วยปัญหา จุดเด่นสินค้า และคำชวนปิดท้าย">เปิดแรง-ปัญหา-สินค้า-ปิดขาย</option>
+                        <option value="บทพูดเหมือนรีวิวจากผู้ใช้จริง ใช้ภาษาพูด ไม่เป็นทางการเกินไป">รีวิวผู้ใช้จริง</option>
+                        <option value="บทพูดสาธิตวิธีใช้สินค้าเป็นขั้นตอน เข้าใจง่าย">สาธิตวิธีใช้</option>
+                        <option value="บทพูดเล่าเรื่องสั้นๆ ก่อนเจอสินค้าและหลังใช้สินค้า">เล่าเรื่องก่อน/หลัง</option>
+                        <option value="บทพูดเน้นโปรโมชัน ความคุ้มค่า และเหตุผลที่ควรซื้อ">เน้นโปร/ความคุ้มค่า</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="voice-emotion">อารมณ์เสียง</label>
+                    <select id="voice-emotion" class="select">
+                        <option value="ให้ระบบเลือกอารมณ์เสียงที่เหมาะกับสินค้า">Auto ให้ระบบเลือก</option>
+                        <option value="อารมณ์จริงใจ น่าเชื่อถือ ไม่ขายของแข็งเกินไป">จริงใจ</option>
+                        <option value="อารมณ์ตื่นเต้น เหมือนเพิ่งเจอของดี">ตื่นเต้น</option>
+                        <option value="อารมณ์อบอุ่น เป็นมิตร เหมาะกับสินค้าใช้ในบ้าน">อบอุ่น</option>
+                        <option value="อารมณ์มั่นใจ ชัดเจน เหมาะกับสินค้าแก้ปัญหา">มั่นใจ</option>
+                        <option value="อารมณ์หรู สุขุม เหมาะกับสินค้าพรีเมียม">สุขุม หรู</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="video-prompt-extra">รายละเอียดเพิ่มเติม</label>
+                    <textarea id="video-prompt-extra" class="input input--textarea" rows="4"
+                        placeholder="ใส่รายละเอียดวิดีโอเพิ่มเติม เช่น จังหวะการเคลื่อนไหว หรือสิ่งที่อยากให้เกิดขึ้น"
                         style="resize: vertical;"></textarea>
                 </div>
 
                 <div class="field">
-                    <label class="field-label" for="image-count">จำนวนภาพสำรอง (Variations)</label>
-                    <input id="image-count" class="input" type="number" min="1" max="8" value="3" />
+                    <label class="field-label" for="negative-prompt">สิ่งที่ไม่ต้องการ</label>
+                    <textarea id="negative-prompt" class="input input--textarea" rows="4"
+                        placeholder="เช่น ห้ามมือผิดรูป ห้ามตัวหนังสือมั่ว ห้ามโลโก้ปลอม ห้ามสินค้าเพี้ยน"
+                        style="resize: vertical;"></textarea>
                 </div>
-
-                <div class="field">
-                    <label class="field-label" for="image-strength">ความแรงของสไตล์ (Style Strength)</label>
-                    <input id="image-strength" class="input" type="range" min="0" max="100" value="80" />
-                </div>
-
-                <div class="field">
-                    <label class="field-label" for="image-quality">คุณภาพ (Quality)</label>
-                    <select id="image-quality" class="select">
-                        <option value="standard">Standard</option>
-                        <option value="high" selected>High</option>
-                        <option value="ultra">Ultra</option>
-                    </select>
-                </div>
-
-                <!-- Video Generation Settings -->
-                <h3
-                    style="margin-top: 20px; margin-bottom: 8px; font-size: 13px; color: var(--accent); font-weight: 600;">
-                    2. ตั้งค่านำภาพไปทำวิดีโอ (Video Settings)</h3>
-                <div class="field">
-                    <label class="field-label" for="video-motion">มุมกล้อง (Camera Motion)</label>
-                    <select id="video-motion" class="select">
-                        <option value="auto">Auto (ให้ AI เลือก)</option>
-                        <option value="zoom-in">Zoom In (ซูมเข้า)</option>
-                        <option value="zoom-out">Zoom Out (ซูมออก)</option>
-                        <option value="pan-left">Pan Left (แพนซ้าย)</option>
-                        <option value="pan-right">Pan Right (แพนขวา)</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label class="field-label" for="video-duration">ระยะเวลา (Video Duration)</label>
-                    <input id="video-duration" class="input" type="number" min="3" max="60" value="15" />
-                </div>
-
-                <div class="field">
-                    <label class="field-label" for="video-fps">เฟรมต่อวินาที (FPS)</label>
-                    <select id="video-fps" class="select">
-                        <option value="24">24</option>
-                        <option value="25">25</option>
-                        <option value="30" selected>30</option>
-                        <option value="60">60</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label class="field-label" for="video-transition">ทรานซิชัน (Transition)</label>
-                    <select id="video-transition" class="select">
-                        <option value="cut">Cut</option>
-                        <option value="fade">Fade</option>
-                        <option value="crosszoom">Cross Zoom</option>
-                        <option value="slide">Slide</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label class="field-label" for="video-soundtrack">เสียงประกอบ (Soundtrack)</label>
-                    <select id="video-soundtrack" class="select">
-                        <option value="none">ไม่มี</option>
-                        <option value="upbeat">Upbeat</option>
-                        <option value="soft">Soft Ambient</option>
-                        <option value="dramatic">Dramatic</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label class="field-label" for="video-overlay-text">ข้อความทับวิดีโอ (Overlay Text)</label>
-                    <input id="video-overlay-text" class="input" type="text" placeholder="เช่น: สินค้าลดราคา 50%" />
-                </div>
-
-                <div class="field-inline" style="gap:12px; align-items:center;">
-                    <label style="display:flex; gap:8px; align-items:center;">
-                        <input id="auto-caption" type="checkbox" />
-                        สร้างคำบรรยายอัตโนมัติ (Auto captions)
-                    </label>
-                    <label style="display:flex; gap:8px; align-items:center; margin-left:8px;">
-                        <input id="generate-images-first" type="checkbox" checked />
-                        สร้างภาพก่อนแล้วจึงทำวิดีโอ
-                    </label>
-                </div>
-
-                <div class="field">
-                    <label class="field-label" for="video-prompt-extra">รายละเอียดวิดีโอ (Video Prompt)</label>
-                    <textarea id="video-prompt-extra" class="input" rows="2"
-                        placeholder="เช่น: น้ำหยดลงพื้น, มีควันจางๆ พัดผ่าน..." style="resize: vertical;"></textarea>
-                </div>
-
-                <div class="field" style="margin-top: 20px;">
-                    <button id="generate-video-btn" class="button button--primary" type="button">
-                        <img class="button__icon" src="assets/icon-flow.svg" alt="Generate" />
-                        เริ่มสร้างภาพและวิดีโอบน Flow
-                    </button>
-                </div>
-
-                <div class="field">
-                    <button id="open-flow-btn" class="button button--ghost" type="button">
-                        เปิดหน้า Google Flow
-                    </button>
+                    </div>
                 </div>
             </div>
         </section>
+
+        <div class="sticky-action">
+            <button id="generate-video-btn" class="button button--primary" type="button">
+                <img class="button__icon" src="assets/icon-flow.svg" alt="Generate" />
+                สร้างภาพก่อน แล้วสร้างวิดีโอ
+            </button>
+        </div>
     </div>
 
     <!-- TikTok Tab -->

@@ -1,21 +1,39 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bg" x1="18" y1="14" x2="110" y2="116" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#06172A"/>
-      <stop offset="0.5" stop-color="#0A72E8"/>
-      <stop offset="1" stop-color="#00C7B7"/>
+    <linearGradient id="bg" x1="16" y1="10" x2="112" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#061226"/>
+      <stop offset="0.46" stop-color="#155CFF"/>
+      <stop offset="1" stop-color="#00D7A7"/>
     </linearGradient>
-    <filter id="markShadow" x="25" y="16" width="82" height="98" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#00162D" flood-opacity="0.35"/>
+    <linearGradient id="card" x1="36" y1="30" x2="89" y2="92" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#DDF7FF"/>
+    </linearGradient>
+    <linearGradient id="play" x1="66" y1="45" x2="96" y2="72" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10F2C0"/>
+      <stop offset="1" stop-color="#2B6BFF"/>
+    </linearGradient>
+    <filter id="shadow" x="18" y="18" width="94" height="92" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#00142D" flood-opacity="0.42"/>
     </filter>
   </defs>
 
-  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#bg)"/>
-  <rect x="8" y="8" width="112" height="112" rx="24" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="4"/>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#bg)"/>
+  <path d="M22 13H86C102.016 13 115 25.984 115 42V106" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="6" stroke-linecap="round"/>
+  <rect x="8" y="8" width="112" height="112" rx="25" stroke="#FFFFFF" stroke-opacity="0.34" stroke-width="3"/>
 
-  <g filter="url(#markShadow)">
-    <path d="M47 30C47 23.841 53.691 20.023 58.988 23.159L95.154 44.578C100.351 47.656 100.351 55.186 95.154 58.264L58.988 79.683C53.691 82.819 47 79.001 47 72.842V30Z" fill="#FFFFFF"/>
-    <path d="M40 86H88" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
-    <path d="M50 103H78" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+  <g filter="url(#shadow)">
+    <path d="M37 31H78.5C82.918 31 86.5 34.582 86.5 39V88C86.5 92.418 82.918 96 78.5 96H37C32.582 96 29 92.418 29 88V39C29 34.582 32.582 31 37 31Z" fill="url(#card)"/>
+    <path d="M39 44H70" stroke="#0E1B35" stroke-opacity="0.86" stroke-width="6" stroke-linecap="round"/>
+    <path d="M39 58H58" stroke="#155CFF" stroke-opacity="0.72" stroke-width="5" stroke-linecap="round"/>
+    <path d="M40 76L50 66L60 76L68 69L78 83H38L40 76Z" fill="#11BFA5"/>
+    <path d="M37 31H78.5C82.918 31 86.5 34.582 86.5 39V88C86.5 92.418 82.918 96 78.5 96H37C32.582 96 29 92.418 29 88V39C29 34.582 32.582 31 37 31Z" stroke="#FFFFFF" stroke-opacity="0.7" stroke-width="3"/>
+
+    <circle cx="84" cy="63" r="24" fill="#061226" stroke="#FFFFFF" stroke-width="4"/>
+    <path d="M78 51.7C78 49.371 80.557 47.945 82.54 49.166L98.864 59.218C100.75 60.379 100.75 63.121 98.864 64.282L82.54 74.334C80.557 75.555 78 74.129 78 71.8V51.7Z" fill="url(#play)"/>
   </g>
+
+  <path d="M101 27V39" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M95 33H107" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M22 102H57" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="7" stroke-linecap="round"/>
 </svg>

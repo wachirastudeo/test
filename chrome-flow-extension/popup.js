@@ -16,6 +16,12 @@ function updateImageSourceUI() {
   uploadField.hidden = !usingUpload;
 }
 
+function updateCustomLocationUI() {
+  const sceneSelect = document.getElementById('image-scene');
+  const customField = document.getElementById('custom-image-scene-field');
+  customField.hidden = sceneSelect.value !== 'custom';
+}
+
 function setProductFields({ name = '', image = '', hasSelectedProduct = false } = {}) {
   const nameInput = document.getElementById('product-name-input');
   const imageInput = document.getElementById('product-image-input');
@@ -69,6 +75,7 @@ async function loadSelectedProduct() {
   }
 
   updateImageSourceUI();
+  updateCustomLocationUI();
 }
 
 document.getElementById('product-image-input').addEventListener('input', (e) => {
@@ -83,6 +90,10 @@ document.getElementById('product-name-input').addEventListener('input', (e) => {
 
 document.getElementById('image-source-select').addEventListener('change', () => {
   updateImageSourceUI();
+});
+
+document.getElementById('image-scene').addEventListener('change', () => {
+  updateCustomLocationUI();
 });
 
 document.getElementById('manual-image-upload').addEventListener('change', (e) => {
@@ -107,26 +118,28 @@ document.getElementById('remove-product-btn').addEventListener('click', async ()
   updateImageSourceUI();
 });
 
-function openFlow() {
-  chrome.runtime.sendMessage({ action: 'openFlow' });
-}
-
 async function generateVideo() {
   const imageStyle = document.getElementById('image-style').value;
-  const imageAspectRatio = document.getElementById('image-aspect-ratio').value;
+  const imageComposition = document.getElementById('image-composition').value;
+  const selectedImageScene = document.getElementById('image-scene').value;
+  const customImageScene = document.getElementById('custom-image-scene').value;
+  const imageScene = selectedImageScene === 'custom' ? customImageScene : selectedImageScene;
+  const imageMood = document.getElementById('image-mood').value;
+  const videoAngle = document.getElementById('video-angle').value;
+  const imageAspectRatio = '9:16';
   const imagePromptExtra = document.getElementById('image-prompt-extra').value;
-  const imageCount = parseInt(document.getElementById('image-count').value, 10) || 1;
-  const imageStrength = parseInt(document.getElementById('image-strength').value, 10) || 80;
-  const imageQuality = document.getElementById('image-quality').value;
+  const personPresence = document.getElementById('person-presence').value;
+  const personGender = document.getElementById('person-gender').value;
+  const personAge = document.getElementById('person-age').value;
+  const personStyle = document.getElementById('person-style').value;
   const videoMotion = document.getElementById('video-motion').value;
+  const videoPace = document.getElementById('video-pace').value;
   const videoPromptExtra = document.getElementById('video-prompt-extra').value;
-  const videoDuration = parseInt(document.getElementById('video-duration').value, 10) || 15;
-  const videoFps = parseInt(document.getElementById('video-fps').value, 10) || 30;
-  const videoTransition = document.getElementById('video-transition').value;
-  const videoSoundtrack = document.getElementById('video-soundtrack').value;
-  const videoOverlayText = document.getElementById('video-overlay-text').value || '';
-  const autoCaption = !!document.getElementById('auto-caption').checked;
-  const generateImagesFirst = !!document.getElementById('generate-images-first').checked;
+  const speechMode = document.getElementById('speech-mode').value;
+  const voiceStyle = document.getElementById('voice-style').value;
+  const scriptStyle = document.getElementById('script-style').value;
+  const voiceEmotion = document.getElementById('voice-emotion').value;
+  const negativePrompt = document.getElementById('negative-prompt').value;
   const productName = document.getElementById('product-name-input').value;
   const productImage = document.getElementById('product-image-input').value;
   const imageSource = document.getElementById('image-source-select').value;
@@ -134,11 +147,12 @@ async function generateVideo() {
   console.log('💾 Saving video settings...');
   await chrome.storage.local.set({ 
     videoSettings: { 
-      imageStyle, imageAspectRatio, imagePromptExtra,
-      imageCount, imageStrength, imageQuality,
-      videoMotion, videoPromptExtra,
-      videoDuration, videoFps, videoTransition, videoSoundtrack, videoOverlayText,
-      autoCaption, generateImagesFirst,
+      imageStyle, imageComposition, imageScene, imageMood,
+      imageAspectRatio, imagePromptExtra,
+      videoAngle,
+      personPresence, personGender, personAge, personStyle,
+      videoMotion, videoPace, videoPromptExtra,
+      speechMode, voiceStyle, scriptStyle, voiceEmotion, negativePrompt,
       productName, productImage 
     },
     manualVideoProduct: { name: productName, image: productImage, source: imageSource },
@@ -154,7 +168,6 @@ async function generateVideo() {
 videoTabBtn.addEventListener('click', () => setActiveTab('video'));
 tiktokTabBtn.addEventListener('click', () => setActiveTab('tiktok'));
 
-document.getElementById('open-flow-btn').addEventListener('click', openFlow);
 document.getElementById('generate-video-btn').addEventListener('click', generateVideo);
 
 chrome.storage.local.get('activeTab', (data) => {

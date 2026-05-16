@@ -164,9 +164,11 @@ async function automate() {
 
   const {
     productImage, productName, imagePromptExtra,
-    imageAspectRatio = '9:16', imageStyle, imageCount, imageStrength, imageQuality,
-    videoMotion, videoDuration, videoFps, videoTransition, videoSoundtrack, videoOverlayText,
-    autoCaption, generateImagesFirst
+    imageAspectRatio = '9:16', imageStyle, imageComposition, imageScene, imageMood,
+    videoAngle,
+    personPresence, personGender, personAge, personStyle,
+    videoMotion, videoPace, videoPromptExtra,
+    speechMode, voiceStyle, scriptStyle, voiceEmotion, negativePrompt
   } = videoSettings;
   console.log('🚀 Starting generation for TikTok product:', productName);
 
@@ -190,19 +192,24 @@ async function automate() {
     // Build enhanced prompt including styling & video instructions
     const promptParts = [];
     promptParts.push(productName || 'Product');
-    if (imagePromptExtra) promptParts.push(imagePromptExtra);
-    if (imageStyle) promptParts.push(`Style: ${imageStyle}`);
-    if (imageQuality) promptParts.push(`Quality: ${imageQuality}`);
-    if (imageStrength) promptParts.push(`Style strength: ${imageStrength}%`);
-    if (imageCount) promptParts.push(`Variations: ${imageCount}`);
-    if (videoMotion) promptParts.push(`Camera motion: ${videoMotion}`);
-    if (videoDuration) promptParts.push(`Duration: ${videoDuration}s`);
-    if (videoFps) promptParts.push(`FPS: ${videoFps}`);
-    if (videoTransition) promptParts.push(`Transition: ${videoTransition}`);
-    if (videoSoundtrack && videoSoundtrack !== 'none') promptParts.push(`Soundtrack: ${videoSoundtrack}`);
-    if (videoOverlayText) promptParts.push(`Overlay text: ${videoOverlayText}`);
-    if (autoCaption) promptParts.push('Include auto-generated captions.');
-    if (generateImagesFirst) promptParts.push('Generate image variations first, then compose video.');
+    if (imageStyle) promptParts.push(`สร้างภาพนิ่งก่อน: ${imageStyle}`);
+    if (imageComposition) promptParts.push(`รูปแบบภาพนิ่ง: ${imageComposition}`);
+    if (imageScene) promptParts.push(`ฉาก/พื้นหลังภาพนิ่ง: ${imageScene}`);
+    if (imageMood) promptParts.push(`บรรยากาศภาพนิ่ง: ${imageMood}`);
+    if (personPresence) promptParts.push(`คนในภาพนิ่ง: ${personPresence}`);
+    if (personGender) promptParts.push(`เพศ/ลักษณะคนในภาพนิ่ง: ${personGender}`);
+    if (personAge) promptParts.push(`ช่วงอายุคนในภาพนิ่ง: ${personAge}`);
+    if (personStyle) promptParts.push(`สไตล์คนในภาพนิ่ง: ${personStyle}`);
+    if (imagePromptExtra) promptParts.push(`รายละเอียดภาพนิ่ง: ${imagePromptExtra}`);
+    if (videoAngle) promptParts.push(`มุมขาย: ${videoAngle}`);
+    if (videoMotion) promptParts.push(`การเคลื่อนไหวกล้อง: ${videoMotion}`);
+    if (videoPace) promptParts.push(`จังหวะวิดีโอ: ${videoPace}`);
+    if (videoPromptExtra) promptParts.push(videoPromptExtra);
+    if (speechMode) promptParts.push(`บทพูด/เสียงพูด: ${speechMode}`);
+    if (voiceStyle) promptParts.push(`สไตล์เสียงไทย: ${voiceStyle}`);
+    if (scriptStyle) promptParts.push(`แนวบทพูด: ${scriptStyle}`);
+    if (voiceEmotion) promptParts.push(`อารมณ์เสียง: ${voiceEmotion}`);
+    if (negativePrompt) promptParts.push(`หลีกเลี่ยง: ${negativePrompt}`);
 
     const finalPrompt = promptParts.join('. ').trim();
     const promptSuccess = await setPromptText(finalPrompt);
