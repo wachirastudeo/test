@@ -1,6 +1,6 @@
 /**
  * explore-flow.js — connect เข้า Chrome ที่เปิดอยู่แล้ว
- *
+ * 
  * ขั้นตอน:
  * 1. ปิด Chrome ทั้งหมด (Cmd+Q)
  * 2. เปิด Chrome พร้อม remote debugging (รันใน Terminal):

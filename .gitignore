@@ -4,10 +4,7 @@ node_modules/
 .pnp.js
 
 # Testing / Debugging
-flow-dom.html
-flow-elements.json
-flow-step*.png
-flow-after-click.png
+
 *.log
 
 # Environment variables
