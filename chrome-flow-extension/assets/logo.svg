@@ -1,18 +1,5 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3b82f6" />
-      <stop offset="100%" stop-color="#8b5cf6" />
-    </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.3" />
-    </filter>
-  </defs>
-
-  <rect width="128" height="128" rx="28" fill="url(#bg)" />
-  
-  <path d="M48 40 C48 35.5817 52.8123 32.8166 56.6433 35.0296L92.6433 55.8142C96.4447 58.0097 96.4447 63.486 92.6433 65.6816L56.6433 86.4661C52.8123 88.6791 48 85.914 48 81.4958V40Z" fill="white" filter="url(#glow)" />
-  
-  <!-- Overlay magical sparkle -->
-  <path d="M84 32 L86 40 L94 42 L86 44 L84 52 L82 44 L74 42 L82 40 Z" fill="white" opacity="0.9" />
+  <path d="M47 32C47 25.841 53.691 22.023 58.988 25.159L93.154 45.393C98.351 48.471 98.351 56.001 93.154 59.079L58.988 79.313C53.691 82.449 47 78.631 47 72.472V32Z" fill="#111111"/>
+  <path d="M40 84H88" stroke="#111111" stroke-width="12" stroke-linecap="round"/>
+  <path d="M50 102H78" stroke="#111111" stroke-width="10" stroke-linecap="round"/>
 </svg>
