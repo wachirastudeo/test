@@ -4,6 +4,31 @@ const videoTabBtn = document.getElementById('videoTabBtn');
 const tiktokTabBtn = document.getElementById('tiktokTabBtn');
 const videoTab = document.getElementById('videoTab');
 const tiktokTab = document.getElementById('tiktokTab');
+const defaultPreviewImage = 'assets/icon-128.png';
+
+function updateImageSourceUI() {
+  const sourceSelect = document.getElementById('image-source-select');
+  const imageInput = document.getElementById('product-image-input');
+  const uploadField = document.getElementById('manual-image-upload-field');
+  const usingUpload = sourceSelect.value === 'upload';
+
+  imageInput.closest('div').hidden = usingUpload;
+  uploadField.hidden = !usingUpload;
+}
+
+function setProductFields({ name = '', image = '', hasSelectedProduct = false } = {}) {
+  const nameInput = document.getElementById('product-name-input');
+  const imageInput = document.getElementById('product-image-input');
+  const previewImg = document.getElementById('product-image-preview');
+  const status = document.getElementById('selected-product-status');
+  const removeBtn = document.getElementById('remove-product-btn');
+
+  nameInput.value = name;
+  imageInput.value = image;
+  previewImg.src = image || defaultPreviewImage;
+  status.textContent = hasSelectedProduct ? 'เลือกสินค้าจาก TikTok แล้ว' : 'ยังไม่ได้เลือกสินค้า';
+  removeBtn.disabled = !hasSelectedProduct && !name && !image;
+}
 
 function setActiveTab(tabName) {
   if (tabName === 'video') {
@@ -21,26 +46,65 @@ function setActiveTab(tabName) {
 }
 
 async function loadSelectedProduct() {
-  const { selectedProduct } = await chrome.storage.local.get('selectedProduct');
-  const nameInput = document.getElementById('product-name-input');
-  const imageInput = document.getElementById('product-image-input');
-  const previewImg = document.getElementById('product-image-preview');
+  const { selectedProduct, manualVideoProduct } = await chrome.storage.local.get([
+    'selectedProduct',
+    'manualVideoProduct'
+  ]);
   
   if (selectedProduct) {
-    const imageUrl = selectedProduct.imageUrls?.[0] || "assets/icon-128.png";
-    nameInput.value = selectedProduct.name || '';
-    imageInput.value = imageUrl;
-    previewImg.src = imageUrl;
+    const imageUrl = selectedProduct.imageUrls?.[0] || '';
+    document.getElementById('image-source-select').value = 'url';
+    setProductFields({
+      name: selectedProduct.name || '',
+      image: imageUrl,
+      hasSelectedProduct: true
+    });
   } else {
-    nameInput.value = '';
-    imageInput.value = '';
-    previewImg.src = 'assets/icon-128.png';
+    document.getElementById('image-source-select').value = manualVideoProduct?.source || 'url';
+    setProductFields({
+      name: manualVideoProduct?.name || '',
+      image: manualVideoProduct?.image || '',
+      hasSelectedProduct: false
+    });
   }
+
+  updateImageSourceUI();
 }
 
 document.getElementById('product-image-input').addEventListener('input', (e) => {
   const previewImg = document.getElementById('product-image-preview');
-  previewImg.src = e.target.value || 'assets/icon-128.png';
+  previewImg.src = e.target.value || defaultPreviewImage;
+  document.getElementById('remove-product-btn').disabled = !e.target.value && !document.getElementById('product-name-input').value;
+});
+
+document.getElementById('product-name-input').addEventListener('input', (e) => {
+  document.getElementById('remove-product-btn').disabled = !e.target.value && !document.getElementById('product-image-input').value;
+});
+
+document.getElementById('image-source-select').addEventListener('change', () => {
+  updateImageSourceUI();
+});
+
+document.getElementById('manual-image-upload').addEventListener('change', (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const dataUrl = String(reader.result || '');
+    document.getElementById('product-image-input').value = dataUrl;
+    document.getElementById('product-image-preview').src = dataUrl || defaultPreviewImage;
+    document.getElementById('remove-product-btn').disabled = false;
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('remove-product-btn').addEventListener('click', async () => {
+  await chrome.storage.local.remove(['selectedProduct', 'productQueue', 'manualVideoProduct']);
+  document.getElementById('manual-image-upload').value = '';
+  document.getElementById('image-source-select').value = 'url';
+  setProductFields();
+  updateImageSourceUI();
 });
 
 function openFlow() {
@@ -65,6 +129,7 @@ async function generateVideo() {
   const generateImagesFirst = !!document.getElementById('generate-images-first').checked;
   const productName = document.getElementById('product-name-input').value;
   const productImage = document.getElementById('product-image-input').value;
+  const imageSource = document.getElementById('image-source-select').value;
   
   console.log('💾 Saving video settings...');
   await chrome.storage.local.set({ 
@@ -76,6 +141,7 @@ async function generateVideo() {
       autoCaption, generateImagesFirst,
       productName, productImage 
     },
+    manualVideoProduct: { name: productName, image: productImage, source: imageSource },
     autoGenerateVideo: true  // Flag to auto-generate after opening
   });
   

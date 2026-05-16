@@ -15,7 +15,7 @@ async function uploadImageFromUrl(url) {
   try {
     const response = await fetch(url);
     const blob = await response.blob();
-    const fileName = url.split('/').pop() || 'product.jpg';
+    const fileName = url.startsWith('data:') ? 'uploaded-product.jpg' : (url.split('/').pop() || 'product.jpg');
     const file = new File([blob], fileName, { type: blob.type });
 
     // Find the hidden file input

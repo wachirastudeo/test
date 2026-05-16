@@ -44,11 +44,16 @@
                 </div>
 
                 <!-- Selected Product Fields -->
-                <div class="field" style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px;">
-                    <img id="product-image-preview" src="assets/icon-128.png"
-                        style="width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2);"
+                <div class="product-source">
+                    <img id="product-image-preview" class="product-source__preview" src="assets/icon-128.png"
                         alt="Preview">
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                    <div class="product-source__fields">
+                        <div class="product-source__topline">
+                            <span id="selected-product-status" class="product-source__status">ยังไม่ได้เลือกสินค้า</span>
+                            <button id="remove-product-btn" class="button button--danger button--compact" type="button">
+                                ลบสินค้า
+                            </button>
+                        </div>
                         <div>
                             <label class="field-label" for="product-name-input"
                                 style="margin-bottom: 4px;">ชื่อสินค้า</label>
@@ -56,9 +61,22 @@
                                 placeholder="สามารถแก้ไขชื่อสินค้าได้ที่นี่">
                         </div>
                         <div>
+                            <label class="field-label" for="image-source-select"
+                                style="margin-bottom: 4px;">แหล่งรูปภาพ</label>
+                            <select id="image-source-select" class="select">
+                                <option value="url" selected>ใช้ URL รูปภาพ</option>
+                                <option value="upload">อัพโหลดรูปเอง</option>
+                            </select>
+                        </div>
+                        <div>
                             <label class="field-label" for="product-image-input"
                                 style="margin-bottom: 4px;">ลิงก์รูปภาพ</label>
                             <input type="text" id="product-image-input" class="input" placeholder="วาง URL ของรูปภาพ">
+                        </div>
+                        <div id="manual-image-upload-field" hidden>
+                            <label class="field-label" for="manual-image-upload"
+                                style="margin-bottom: 4px;">อัพโหลดรูปสินค้า</label>
+                            <input type="file" id="manual-image-upload" class="input" accept="image/*">
                         </div>
                     </div>
                 </div>
